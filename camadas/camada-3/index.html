@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camada 3 — Confiabilidade | CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .layer-hero {
+      padding: 4rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-lg);
+    }
+
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb span { color: var(--text-muted); }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .layer-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .layer-info h1 {
+      font-size: 2.2rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .layer-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .layer-week {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 0.2em 0.7em;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+    }
+
+    .layer-content {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: var(--space-2xl);
+      padding: var(--space-2xl) 0;
+    }
+
+    .exp-section {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-md);
+      overflow: hidden;
+      transition: border-color var(--duration) var(--ease);
+    }
+
+    .exp-section:hover { border-color: var(--border-hover); }
+
+    .exp-section-inner { border-left: 3px solid var(--d4); }
+    .exp-section:nth-child(1) .exp-section-inner { border-left-color: var(--d1); }
+    .exp-section:nth-child(4) .exp-section-inner { border-left-color: var(--d5); }
+    .exp-section:nth-child(5) .exp-section-inner { border-left-color: var(--d1); }
+
+    .exp-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--bg-card);
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      transition: background var(--duration) var(--ease);
+    }
+
+    .exp-toggle:hover { background: var(--bg-card-hover); }
+
+    .exp-toggle-icon {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s var(--ease);
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .exp-section.open .exp-toggle-icon { transform: rotate(180deg); }
+
+    .exp-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease);
+    }
+
+    .exp-section.open .exp-body { max-height: 2000px; }
+
+    .exp-body-inner {
+      padding: 0 var(--space-xl) var(--space-xl);
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .exp-body-inner p { margin-bottom: var(--space-md); }
+
+    .exp-body-inner ul {
+      margin: var(--space-sm) 0 var(--space-md) var(--space-lg);
+    }
+
+    .exp-body-inner li { margin-bottom: var(--space-xs); }
+
+    .concept-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+    }
+
+    .concept-box h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .anti-pattern {
+      background: var(--danger-subtle);
+      border-left: 3px solid var(--danger);
+      padding: var(--space-md);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: var(--space-md) 0;
+      font-size: 0.9rem;
+    }
+
+    .anti-pattern strong { color: var(--danger); }
+
+    .golden-rule {
+      background: var(--warning-subtle);
+      border-left: 3px solid var(--warning);
+      padding: var(--space-md);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: var(--space-md) 0;
+      font-size: 0.9rem;
+    }
+
+    .golden-rule strong { color: var(--warning); }
+
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+
+    .sidebar-card h3 {
+      font-size: 1rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .sidebar-card ul { list-style: none; }
+
+    .sidebar-card li {
+      padding: var(--space-xs) 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-card li:last-child { border-bottom: none; }
+
+    .sidebar-card li::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--d4);
+      margin-right: 0.6em;
+      vertical-align: middle;
+    }
+
+    .checklist { list-style: none; }
+    .checklist li { border-bottom: 1px solid var(--border); }
+    .checklist li::before { display: none; }
+    .checklist li:last-child { border-bottom: none; }
+
+    .checklist label {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: color var(--duration) var(--ease);
+    }
+
+    .checklist input[type="checkbox"] {
+      accent-color: var(--accent);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .checklist label:has(input:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .next-teaser {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .next-teaser h4 {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: var(--space-xs);
+    }
+
+    .next-teaser p { color: var(--text-secondary); font-size: 0.9rem; }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-2xl) 0;
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-2xl);
+    }
+
+    .bottom-nav a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: all var(--duration) var(--ease);
+    }
+
+    .bottom-nav a:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    @media (max-width: 768px) {
+      .layer-content { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .layer-info h1 { font-size: 1.6rem; }
+      .bottom-nav { flex-direction: column; gap: var(--space-md); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../../index.html">Inicio</a></li>
+        <li><a href="../../mapa/index.html">Mapa</a></li>
+        <li><a href="../../cenarios/index.html">Cenarios</a></li>
+        <li><a href="../../flashcards/index.html">Flashcards</a></li>
+        <li><a href="../index.html" class="active">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="layer-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="../index.html">Camadas</a>
+          <span>/</span>
+          <span>Camada 3</span>
+        </div>
+        <div class="layer-header">
+          <div class="layer-number">3</div>
+          <div class="layer-info">
+            <h1>Confiabilidade</h1>
+            <div class="layer-meta">
+              <span class="layer-week">Semana 3</span>
+              <span class="badge badge-d1">D1 Hooks</span>
+              <span class="badge badge-d4">D4 Validacao</span>
+              <span class="badge badge-d5">D5 Contexto</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="layer-content">
+          <div class="layer-main">
+
+            <!-- Section 1 -->
+            <div class="exp-section open">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="true">
+                  <span>Hooks vs Prompts</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <div class="golden-rule">
+                      <strong>Regra de Ouro:</strong> Hooks = deterministico. Prompts = probabilistico. Quando compliance e obrigatorio, use hooks. Prompts podem falhar.
+                    </div>
+                    <p>Hooks do Agent SDK interceptam chamadas de ferramentas de forma programatica. O tipo mais importante e o <code>PostToolUse</code>, que intercepta resultados de ferramentas antes que o modelo os processe.</p>
+                    <p>Casos de uso de hooks:</p>
+                    <ul>
+                      <li><strong>Normalizacao de dados</strong> — Converter timestamps para ISO 8601, padronizar status codes, formatar valores monetarios</li>
+                      <li><strong>Bloqueio por politica</strong> — Bloquear reembolsos acima de um threshold, impedir acesso a dados sensiveis</li>
+                      <li><strong>Auditoria</strong> — Registrar todas as chamadas de ferramentas para compliance</li>
+                    </ul>
+                    <div class="anti-pattern">
+                      <strong>Anti-pattern critico:</strong> Usar prompts para compliance financeira. "Por favor, nao permita reembolsos acima de R$500" no prompt e probabilistico — o modelo pode ignorar. Um hook que bloqueia a chamada e deterministico.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Validacao e Retry Loops</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Retry com error-feedback e uma tecnica poderosa: quando a validacao falha, voce adiciona os erros especificos ao contexto e pede ao modelo para corrigir.</p>
+                    <p>A chave e fornecer feedback <strong>especifico</strong>, nao generico:</p>
+                    <ul>
+                      <li>Correto: "Campo 'data_nascimento' esta no formato DD/MM/YYYY, esperado YYYY-MM-DD"</li>
+                      <li>Errado: "Erro de validacao, tente novamente"</li>
+                    </ul>
+                    <div class="anti-pattern">
+                      <strong>Quando retry NAO funciona:</strong> Se a informacao esta ausente no documento fonte, nenhum retry vai resolve-lo. Retry e eficaz para erros de formato, nao para dados faltantes. Saber distinguir essas situacoes e testado no exame.
+                    </div>
+                    <div class="concept-box">
+                      <h4>Padrao de Self-Correction</h4>
+                      <p>Envie o documento original + erros de validacao na mensagem de retry. O campo <code>detected_pattern</code> pode ajudar a identificar falsos positivos sistematicos.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Erros Estruturados</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Erros genericos sao um anti-pattern grave. O modelo precisa de contexto estruturado para tomar decisoes inteligentes de recuperacao.</p>
+                    <p>Todo erro deve incluir:</p>
+                    <ul>
+                      <li><code>errorCategory</code> — transient (timeout), validation (input invalido), business (politica), permission</li>
+                      <li><code>isRetryable</code> — boolean indicando se vale a pena tentar novamente</li>
+                      <li><strong>Resultados parciais</strong> — O que ja foi obtido antes da falha</li>
+                      <li><strong>Alternativas</strong> — Outras abordagens que o modelo pode tentar</li>
+                    </ul>
+                    <p>A flag <code>isError</code> sinaliza para o modelo que a resposta da ferramenta representa uma falha, nao um resultado valido.</p>
+                    <div class="anti-pattern">
+                      <strong>Distincao critica:</strong> Falha de acesso (timeout, 500) e diferente de resultado vazio valido (consulta sem resultados). Tratar ambos como "erro" impede recuperacao correta.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Gerenciamento de Contexto</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>O contexto e o recurso mais precioso e fragil de um agente. Tres problemas centrais:</p>
+                    <ul>
+                      <li><strong>Lost in the middle</strong> — Modelos processam bem o inicio e o fim do contexto, mas podem omitir informacoes do meio. Coloque fatos criticos no inicio ou use section headers.</li>
+                      <li><strong>Progressive summarization</strong> — Resumos perdem valores numericos, datas e expectativas especificas. Extraia fatos transacionais para um bloco persistente de "case facts".</li>
+                      <li><strong>Tool results accumulation</strong> — Resultados de ferramentas acumulam tokens sem proporcao com sua relevancia. Corte outputs verbosos.</li>
+                    </ul>
+                    <div class="concept-box">
+                      <h4>Padrao Recomendado</h4>
+                      <p>Mantenha um bloco de "case facts" persistente com dados criticos (nome do cliente, numero do pedido, valores). Resumos ficam no inicio do contexto com section headers claros. Use <code>/compact</code> para reduzir contexto quando necessario.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 5 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Projeto: Agente de Suporte</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Evolua o extrator da Camada 2 para um agente de suporte ao cliente com garantias de confiabilidade:</p>
+                    <ul>
+                      <li><strong>Compliance via hooks</strong> — PostToolUse para bloquear reembolsos acima do limite e normalizar dados do cliente</li>
+                      <li><strong>Escalation patterns</strong> — Criterios explicitos para escalar: cliente pede humano, lacuna de politica, incapacidade de progredir</li>
+                      <li><strong>Handoff estruturado</strong> — Ao escalar, incluir: detalhes do cliente, causa raiz, acoes tomadas, recomendacoes</li>
+                      <li><strong>Erros com contexto</strong> — Cada falha de ferramenta retorna errorCategory, isRetryable e alternativas</li>
+                    </ul>
+                    <div class="concept-box">
+                      <h4>Evolucao do Projeto</h4>
+                      <p>O extrator agora e confiavel: hooks garantem compliance, erros estruturados permitem recuperacao inteligente, e o contexto e gerenciado ativamente. Na Camada 4, voce escalara para multi-agente.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="next-teaser">
+              <div>
+                <h4>Proxima camada</h4>
+                <p><strong>Camada 4 — Escala:</strong> Multi-agente hub-and-spoke, MCP servers, CI/CD e revisao independente.</p>
+              </div>
+              <a href="../camada-4/index.html" class="btn btn-secondary">
+                Camada 4
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            </div>
+
+          </div>
+
+          <aside class="sidebar">
+            <div class="sidebar-card">
+              <h3>Conceitos-chave</h3>
+              <ul>
+                <li>Hooks = deterministico</li>
+                <li>Prompts = probabilistico</li>
+                <li>PostToolUse para normalizacao</li>
+                <li>Retry: formato sim, dados nao</li>
+                <li>errorCategory + isRetryable</li>
+                <li>isError flag</li>
+                <li>Lost in the middle</li>
+                <li>Case facts persistentes</li>
+              </ul>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Checklist de Aprendizado</h3>
+              <ul class="checklist" id="checklist">
+                <li><label><input type="checkbox" data-key="c3-hooks"> Entendo hooks vs prompts</label></li>
+                <li><label><input type="checkbox" data-key="c3-posttool"> Sei usar PostToolUse</label></li>
+                <li><label><input type="checkbox" data-key="c3-retry"> Sei quando retry funciona</label></li>
+                <li><label><input type="checkbox" data-key="c3-errors"> Sei estruturar erros</label></li>
+                <li><label><input type="checkbox" data-key="c3-context"> Entendo lost in the middle</label></li>
+                <li><label><input type="checkbox" data-key="c3-facts"> Sei usar case facts</label></li>
+                <li><label><input type="checkbox" data-key="c3-escalation"> Conhego escalation patterns</label></li>
+                <li><label><input type="checkbox" data-key="c3-proj"> Completei o projeto pratico</label></li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+
+        <div class="bottom-nav">
+          <a href="../camada-2/index.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+            Camada 2 — Estrutura
+          </a>
+          <a href="../camada-4/index.html">
+            Camada 4 — Escala
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 &mdash; Preparatorio Claude Certified Architect
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function() {
+      var links = document.getElementById('navLinks');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+
+    window.addEventListener('scroll', function() {
+      var h = document.documentElement;
+      var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('scrollProgress').style.width = pct + '%';
+    });
+
+    document.querySelectorAll('.exp-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var section = this.closest('.exp-section');
+        var isOpen = section.classList.contains('open');
+        section.classList.toggle('open');
+        this.setAttribute('aria-expanded', !isOpen);
+      });
+    });
+
+    var checks = document.querySelectorAll('#checklist input[type="checkbox"]');
+    checks.forEach(function(cb) {
+      var key = 'cca-camada-' + cb.dataset.key;
+      cb.checked = localStorage.getItem(key) === 'true';
+      cb.addEventListener('change', function() {
+        localStorage.setItem(key, this.checked);
+      });
+    });
+  </script>
+</body>
+</html>

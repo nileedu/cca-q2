@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards — CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* Deck selector pills */
+    .deck-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      justify-content: center;
+      margin-bottom: var(--space-xl);
+    }
+
+    .deck-pill {
+      padding: 0.4em 1em;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+      font-family: var(--font);
+    }
+
+    .deck-pill:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .deck-pill.active {
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .deck-pill[data-deck="all"].active { background: var(--accent); }
+    .deck-pill[data-deck="d1"].active { background: var(--d1); }
+    .deck-pill[data-deck="d2"].active { background: var(--d2); }
+    .deck-pill[data-deck="d3"].active { background: var(--d3); }
+    .deck-pill[data-deck="d4"].active { background: var(--d4); }
+    .deck-pill[data-deck="d5"].active { background: var(--d5); }
+    .deck-pill[data-deck="golden"].active { background: var(--warning); color: #0f1117; }
+
+    /* Card area */
+    .card-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .card-counter {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* 3D flip card */
+    .flashcard-wrapper {
+      perspective: 1200px;
+      width: 100%;
+      max-width: 600px;
+      height: 340px;
+      cursor: pointer;
+    }
+
+    .flashcard {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s var(--ease);
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl) var(--space-2xl);
+      text-align: center;
+    }
+
+    .flashcard-front {
+      background: var(--bg-card);
+    }
+
+    .flashcard-back {
+      background: var(--bg-surface);
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-domain {
+      position: absolute;
+      top: var(--space-md);
+      left: var(--space-md);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2em 0.7em;
+      border-radius: 999px;
+    }
+
+    .flashcard-label {
+      position: absolute;
+      top: var(--space-md);
+      right: var(--space-md);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .flashcard-text {
+      font-size: 1.15rem;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .flashcard-back .flashcard-text {
+      font-weight: 400;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    /* Domain colors for card badge */
+    .domain-d1 { background: var(--d1-subtle); color: var(--d1); }
+    .domain-d2 { background: var(--d2-subtle); color: var(--d2); }
+    .domain-d3 { background: var(--d3-subtle); color: var(--d3); }
+    .domain-d4 { background: var(--d4-subtle); color: var(--d4); }
+    .domain-d5 { background: var(--d5-subtle); color: var(--d5); }
+    .domain-golden { background: var(--warning-subtle); color: var(--warning); }
+
+    /* Rating buttons */
+    .rating-buttons {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .rating-btn {
+      padding: 0.6em 1.6em;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid;
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+      font-family: var(--font);
+      min-width: 120px;
+    }
+
+    .rating-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .rating-btn.rate-bad {
+      background: var(--danger-subtle);
+      border-color: rgba(248, 113, 113, 0.3);
+      color: var(--danger);
+    }
+    .rating-btn.rate-bad:hover {
+      background: rgba(248, 113, 113, 0.2);
+    }
+
+    .rating-btn.rate-ok {
+      background: var(--warning-subtle);
+      border-color: rgba(251, 191, 36, 0.3);
+      color: var(--warning);
+    }
+    .rating-btn.rate-ok:hover {
+      background: rgba(251, 191, 36, 0.2);
+    }
+
+    .rating-btn.rate-good {
+      background: var(--success-subtle);
+      border-color: rgba(74, 222, 128, 0.3);
+      color: var(--success);
+    }
+    .rating-btn.rate-good:hover {
+      background: rgba(74, 222, 128, 0.2);
+    }
+
+    .rating-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Navigation arrows */
+    .card-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+
+    .nav-arrow {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all var(--duration) var(--ease);
+      font-family: var(--font);
+    }
+
+    .nav-arrow:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+      background: var(--bg-card-hover);
+    }
+
+    .nav-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Stats dashboard */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      transition: all var(--duration) var(--ease);
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .stat-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-sm);
+    }
+
+    .stat-card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .stat-card-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .stat-card .progress {
+      margin-top: var(--space-sm);
+    }
+
+    .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: var(--space-xs);
+    }
+
+    /* Overall progress */
+    .overall-progress {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+
+    .overall-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+    }
+
+    .overall-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .overall-pct {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .overall-progress .progress {
+      height: 10px;
+    }
+
+    .reset-btn {
+      margin-top: var(--space-md);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      text-decoration: underline;
+      transition: color var(--duration) var(--ease);
+    }
+
+    .reset-btn:hover {
+      color: var(--danger);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-3xl) var(--space-xl);
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      margin-bottom: var(--space-sm);
+      color: var(--text-secondary);
+    }
+
+    /* Keyboard shortcuts */
+    .shortcuts {
+      display: flex;
+      gap: var(--space-lg);
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: var(--space-lg);
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--border);
+    }
+
+    .shortcut {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .shortcut kbd {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.1em 0.5em;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      .flashcard-wrapper {
+        height: 280px;
+      }
+
+      .flashcard-text {
+        font-size: 1rem;
+      }
+
+      .flashcard-back .flashcard-text {
+        font-size: 0.95rem;
+      }
+
+      .flashcard-face {
+        padding: var(--space-lg) var(--space-md);
+      }
+
+      .rating-btn {
+        min-width: 100px;
+        padding: 0.5em 1em;
+        font-size: 0.85rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .shortcuts {
+        gap: var(--space-sm);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../mapa/">Mapa</a></li>
+        <li><a href="../cenarios/">Cenarios</a></li>
+        <li><a href="./" class="active">Flashcards</a></li>
+        <li><a href="../camadas/">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container">
+      <h1 class="fade-in">Flashcards</h1>
+      <p class="fade-in fade-in-delay-1">Domine os conceitos com repeticao espacada</p>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container">
+
+    <!-- Deck selector -->
+    <div class="deck-pills fade-in fade-in-delay-2" id="deckPills">
+      <button class="deck-pill active" data-deck="all">Todos</button>
+      <button class="deck-pill" data-deck="d1">D1: Arquitetura Agentica</button>
+      <button class="deck-pill" data-deck="d2">D2: Ferramentas e MCP</button>
+      <button class="deck-pill" data-deck="d3">D3: Claude Code</button>
+      <button class="deck-pill" data-deck="d4">D4: Prompt e Output</button>
+      <button class="deck-pill" data-deck="d5">D5: Contexto</button>
+      <button class="deck-pill" data-deck="golden">Regras de Ouro</button>
+    </div>
+
+    <!-- Card display -->
+    <div class="card-area" id="cardArea">
+      <div class="card-counter" id="cardCounter">1 / 55</div>
+
+      <div class="flashcard-wrapper" id="flashcardWrapper" onclick="flipCard()">
+        <div class="flashcard" id="flashcard">
+          <div class="flashcard-face flashcard-front">
+            <span class="flashcard-domain domain-d1" id="cardDomain">D1</span>
+            <span class="flashcard-label" id="cardLabelFront">Pergunta</span>
+            <div class="flashcard-text" id="cardQuestion">Carregando...</div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="flashcard-domain domain-d1" id="cardDomainBack">D1</span>
+            <span class="flashcard-label" id="cardLabelBack">Resposta</span>
+            <div class="flashcard-text" id="cardAnswer">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-nav">
+        <button class="nav-arrow" id="prevBtn" onclick="prevCard()" aria-label="Anterior">&#8592;</button>
+        <div class="rating-buttons" id="ratingButtons">
+          <button class="rating-btn rate-bad" onclick="rateCard(0)">Nao sabia</button>
+          <button class="rating-btn rate-ok" onclick="rateCard(1)">Quase</button>
+          <button class="rating-btn rate-good" onclick="rateCard(2)">Sabia</button>
+        </div>
+        <button class="nav-arrow" id="nextBtn" onclick="nextCard()" aria-label="Proximo">&#8594;</button>
+      </div>
+
+      <div class="rating-hint">
+        <kbd>1</kbd> Nao sabia &nbsp; <kbd>2</kbd> Quase &nbsp; <kbd>3</kbd> Sabia
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <h3>Nenhum card neste dominio</h3>
+      <p>Selecione outro dominio para continuar estudando.</p>
+    </div>
+
+    <!-- Progress dashboard -->
+    <section class="section" id="statsSection">
+      <h2 class="section-title">Progresso</h2>
+      <p class="section-subtitle">Acompanhe sua evolucao por dominio</p>
+
+      <div class="overall-progress" id="overallProgress">
+        <div class="overall-header">
+          <span class="overall-title">Progresso geral</span>
+          <span class="overall-pct" id="overallPct">0%</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="overallBar" style="width: 0%"></div>
+        </div>
+        <button class="reset-btn" onclick="resetProgress()">Resetar progresso</button>
+      </div>
+
+      <div class="stats-grid" id="statsGrid"></div>
+    </section>
+
+    <!-- Shortcuts -->
+    <div class="shortcuts">
+      <div class="shortcut"><kbd>Espaco</kbd> Virar card</div>
+      <div class="shortcut"><kbd>&#8592;</kbd> Anterior</div>
+      <div class="shortcut"><kbd>&#8594;</kbd> Proximo</div>
+      <div class="shortcut"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Avaliar</div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>CCA-Q2 — Preparatorio Claude Certified Architect</p>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================================
+    // FLASHCARD DATA
+    // ============================================================
+    const ALL_CARDS = [
+      // Domain 1: Arquitetura Agentica (12)
+      { id: 'd1_01', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Qual e o ciclo do loop agentico?', a: 'Enviar request -> inspecionar stop_reason (tool_use vs end_turn) -> executar tools -> retornar resultados' },
+      { id: 'd1_02', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'O que e arquitetura hub-and-spoke?', a: 'Coordenador gerencia toda comunicacao entre subagentes. Subagentes tem contexto isolado.' },
+      { id: 'd1_03', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Hooks vs Prompts para compliance?', a: 'Hooks = garantia deterministica (100%). Prompts = compliance probabilistica. Para operacoes financeiras, sempre hooks.' },
+      { id: 'd1_04', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Qual anti-pattern no loop agentico?', a: 'Parsear linguagem natural para terminacao, caps arbitrarios de iteracao, checar texto do assistant para completude' },
+      { id: 'd1_05', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Como spawnar subagentes?', a: 'Tool Agent (antigo Task, renomeado v2.1.63). allowedTools deve incluir \'Agent\' para o coordenador.' },
+      { id: 'd1_06', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'fork_session serve para que?', a: 'Explorar abordagens divergentes a partir de um baseline compartilhado.' },
+      { id: 'd1_07', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Quando usar nova sessao vs resume?', a: 'Nova sessao com resumo estruturado > resumir com resultados de tool obsoletos' },
+      { id: 'd1_08', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Risco de decomposicao muito estreita?', a: 'Cobertura incompleta -- subagentes perdem contexto cruzado.' },
+      { id: 'd1_09', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Prompt chaining vs decomposicao adaptativa?', a: 'Chaining: pipelines sequenciais fixos. Adaptativa: subtarefas geradas com base em descobertas.' },
+      { id: 'd1_10', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'PostToolUse hooks servem para que?', a: 'Interceptar resultados de tools para transformacao antes do modelo processar (normalizacao, bloqueio de violacoes).' },
+      { id: 'd1_11', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Como passar contexto para subagentes?', a: 'Deve ser explicitamente fornecido -- nao ha heranca automatica do historico do coordenador.' },
+      { id: 'd1_12', domain: 'd1', domainLabel: 'D1: Arquitetura Agentica', q: 'Handoff estruturado inclui o que?', a: 'Detalhes do cliente, causa raiz, acoes recomendadas.' },
+
+      // Domain 2: Ferramentas e MCP (10)
+      { id: 'd2_01', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'Por que descricoes de ferramentas sao criticas?', a: 'Sao o mecanismo primario para o LLM selecionar a ferramenta correta. Ambiguidade causa roteamento errado.' },
+      { id: 'd2_02', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'Quantas ferramentas por agente?', a: '4-5 ferramentas. 18 ferramentas degrada confiabilidade de selecao.' },
+      { id: 'd2_03', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'Padrao isError serve para que?', a: 'Flag em respostas MCP para comunicar falhas com categorias: transient, validation, business, permission.' },
+      { id: 'd2_04', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'tool_choice options?', a: '\'auto\' (pode retornar texto), \'any\' (deve chamar tool), forced (tool especifica com type+name).' },
+      { id: 'd2_05', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'MCP: .mcp.json vs ~/.claude.json?', a: '.mcp.json = projeto (compartilhado, versionado). ~/.claude.json = pessoal.' },
+      { id: 'd2_06', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'Grep vs Glob?', a: 'Grep = busca por conteudo. Glob = busca por padrao de nome de arquivo.' },
+      { id: 'd2_07', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'Quando Edit falha?', a: 'Quando o match nao e unico -> fallback para Read + Write.' },
+      { id: 'd2_08', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'O que incluir nas descricoes de tools?', a: 'Formatos de input, queries de exemplo, edge cases, limites.' },
+      { id: 'd2_09', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'Erro de tools genericos demais?', a: 'Agentes com tools fora do papel tendem a usa-las incorretamente. Escopo por role.' },
+      { id: 'd2_10', domain: 'd2', domainLabel: 'D2: Ferramentas e MCP', q: 'MCP resources servem para que?', a: 'Catalogos de conteudo: sumarios de issues, schemas de banco, etc.' },
+
+      // Domain 3: Claude Code (10)
+      { id: 'd3_01', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Hierarquia CLAUDE.md?', a: 'User (~/.claude/CLAUDE.md) -> Projeto (.claude/CLAUDE.md ou raiz) -> Diretorio local' },
+      { id: 'd3_02', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Commands: projeto vs pessoais?', a: '.claude/commands/ (versionado, time) vs ~/.claude/commands/ (pessoal)' },
+      { id: 'd3_03', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Skills: o que e context: fork?', a: 'Isolamento -- a skill roda em contexto separado sem poluir a sessao principal.' },
+      { id: 'd3_04', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Quando usar plan mode?', a: 'Tarefas complexas, mudancas em larga escala (45+ arquivos), multiplas abordagens validas, decisoes arquiteturais.' },
+      { id: 'd3_05', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Regras path-specific ficam onde?', a: '.claude/rules/ com YAML frontmatter paths. Ex: paths: [\'terraform/**/*\']' },
+      { id: 'd3_06', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'CI/CD flags essenciais?', a: '-p (nao-interativo) e --output-format json + --json-schema para saida estruturada.' },
+      { id: 'd3_07', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Refinamento iterativo: padrao?', a: 'Exemplos concretos input/output > prosa. Test-driven: testes primeiro, iterar com falhas.' },
+      { id: 'd3_08', domain: 'd3', domainLabel: 'D3: Claude Code', q: '@import no CLAUDE.md?', a: 'Referencias modulares -- quebrar CLAUDE.md grande em arquivos menores.' },
+      { id: 'd3_09', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Explore subagent: quando?', a: 'Para discovery verbose sem poluir o contexto principal.' },
+      { id: 'd3_10', domain: 'd3', domainLabel: 'D3: Claude Code', q: 'Isolamento em CI/CD review?', a: 'Instancia de review separada da de geracao -- evita vies de auto-review.' },
+
+      // Domain 4: Prompt e Output (10)
+      { id: 'd4_01', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'Few-shot e eficaz quando?', a: 'Quando instrucoes detalhadas falham. 2-4 exemplos para cenarios ambiguos com raciocinio.' },
+      { id: 'd4_02', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'tool_use + JSON schema garante o que?', a: 'Elimina erros de sintaxe (formato). MAS nao elimina erros semanticos (significado).' },
+      { id: 'd4_03', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'Retry com feedback: quando NAO funciona?', a: 'Quando a informacao esta ausente do documento fonte. Retries so ajudam com erros de formato.' },
+      { id: 'd4_04', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'Message Batches API: economia?', a: '50% custo. Janela ate 24h. Sem SLA de latencia. Sem tool calling multi-turn.' },
+      { id: 'd4_05', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'Por que self-review e limitado?', a: 'Modelo retem contexto de raciocinio -> menos provavel questionar proprias decisoes.' },
+      { id: 'd4_06', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'Criterios explicitos vs vagos?', a: '\'Flag quando comportamento contradiz codigo\' > \'verifique comentarios\'. Especificidade reduz falsos positivos.' },
+      { id: 'd4_07', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'detected_pattern field?', a: 'Campo para analise sistematica de falsos positivos -- identifica padroes problematicos.' },
+      { id: 'd4_08', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'Batch API: para que workloads?', a: 'Nao-bloqueantes. NAO para checks pre-merge (precisa latencia baixa).' },
+      { id: 'd4_09', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'Multi-pass review?', a: 'Passo 1: analise local por arquivo. Passo 2: integracao cross-file.' },
+      { id: 'd4_10', domain: 'd4', domainLabel: 'D4: Prompt e Output', q: 'tool_choice \'any\' vs \'auto\'?', a: '\'any\' = deve chamar alguma tool (garante estrutura). \'auto\' = pode retornar texto.' },
+
+      // Domain 5: Contexto (8)
+      { id: 'd5_01', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Lost in the middle?', a: 'Modelos processam inicio e fim com confianca, podem omitir informacao do meio.' },
+      { id: 'd5_02', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Escalacao confiavel: que triggers?', a: 'Cliente pede humano, lacuna de politica, impossibilidade de progresso. NAO scores de sentimento.' },
+      { id: 'd5_03', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Erros estruturados incluem?', a: 'Tipo de falha, query tentada, resultados parciais, alternativas.' },
+      { id: 'd5_04', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Scratchpad files: quando?', a: 'Persistir descobertas entre limites de contexto em codebases grandes.' },
+      { id: 'd5_05', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Amostragem estratificada: por que?', a: 'Acuracia agregada (97%) pode mascarar performance ruim em tipos especificos.' },
+      { id: 'd5_06', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Proveniencia: como preservar?', a: 'Mapeamentos claim-source estruturados. Anotar conflitos com atribuicao.' },
+      { id: 'd5_07', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Dados temporais: por que datas?', a: 'Sem datas de publicacao, estatisticas de epocas diferentes parecem contradicoes falsas.' },
+      { id: 'd5_08', domain: 'd5', domainLabel: 'D5: Contexto', q: 'Falha de acesso vs resultado vazio?', a: 'Timeout = falha (retry). Sem matches = resultado valido (nao retry).' },
+
+      // Regras de Ouro (5)
+      { id: 'golden_01', domain: 'golden', domainLabel: 'Regras de Ouro', q: 'Regra #1?', a: 'Hooks > Prompts -- Imposicao programatica garante compliance 100%.' },
+      { id: 'golden_02', domain: 'golden', domainLabel: 'Regras de Ouro', q: 'Regra #2?', a: 'Erros Estruturados Sempre -- O que quebrou, o que tentou, alternativas.' },
+      { id: 'golden_03', domain: 'golden', domainLabel: 'Regras de Ouro', q: 'Regra #3?', a: '4-5 Ferramentas por Agente -- Menos opcoes = decisoes melhores.' },
+      { id: 'golden_04', domain: 'golden', domainLabel: 'Regras de Ouro', q: 'Regra #4?', a: 'Revisao Independente -- Segunda instancia percebe o que a primeira nao percebe.' },
+      { id: 'golden_05', domain: 'golden', domainLabel: 'Regras de Ouro', q: 'Regra #5?', a: 'Exemplos > Instrucoes -- 2-3 exemplos few-shot vencem paragrafos de regras.' },
+    ];
+
+    // ============================================================
+    // DOMAIN CONFIG
+    // ============================================================
+    const DOMAIN_CONFIG = {
+      d1: { label: 'D1: Arquitetura Agentica', color: 'var(--d1)', cssClass: 'domain-d1' },
+      d2: { label: 'D2: Ferramentas e MCP', color: 'var(--d2)', cssClass: 'domain-d2' },
+      d3: { label: 'D3: Claude Code', color: 'var(--d3)', cssClass: 'domain-d3' },
+      d4: { label: 'D4: Prompt e Output', color: 'var(--d4)', cssClass: 'domain-d4' },
+      d5: { label: 'D5: Contexto', color: 'var(--d5)', cssClass: 'domain-d5' },
+      golden: { label: 'Regras de Ouro', color: 'var(--warning)', cssClass: 'domain-golden' },
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    const STORAGE_KEY = 'cca-q2-flashcards';
+
+    let currentDeck = 'all';
+    let queue = [];
+    let currentIndex = 0;
+    let isFlipped = false;
+
+    function loadProgress() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return data || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveProgress(progress) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    }
+
+    function getCardProgress(cardId) {
+      const progress = loadProgress();
+      return progress[cardId] || { mastered: false, interval: 0 };
+    }
+
+    function setCardProgress(cardId, data) {
+      const progress = loadProgress();
+      progress[cardId] = data;
+      saveProgress(progress);
+    }
+
+    // ============================================================
+    // DECK / QUEUE
+    // ============================================================
+    function buildQueue(deck) {
+      let cards;
+      if (deck === 'all') {
+        cards = [...ALL_CARDS];
+      } else {
+        cards = ALL_CARDS.filter(c => c.domain === deck);
+      }
+      // Shuffle
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      return cards;
+    }
+
+    function selectDeck(deck) {
+      currentDeck = deck;
+      queue = buildQueue(deck);
+      currentIndex = 0;
+      isFlipped = false;
+
+      // Update pills
+      document.querySelectorAll('.deck-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.dataset.deck === deck);
+      });
+
+      if (queue.length === 0) {
+        document.getElementById('cardArea').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+      } else {
+        document.getElementById('cardArea').style.display = 'flex';
+        document.getElementById('emptyState').style.display = 'none';
+        renderCard();
+      }
+    }
+
+    // ============================================================
+    // RENDER CARD
+    // ============================================================
+    function renderCard() {
+      if (queue.length === 0) return;
+
+      const card = queue[currentIndex];
+      const config = DOMAIN_CONFIG[card.domain];
+
+      // Unflip
+      isFlipped = false;
+      document.getElementById('flashcard').classList.remove('flipped');
+
+      // Counter
+      document.getElementById('cardCounter').textContent = (currentIndex + 1) + ' / ' + queue.length;
+
+      // Domain badges
+      const domainFront = document.getElementById('cardDomain');
+      const domainBack = document.getElementById('cardDomainBack');
+      domainFront.textContent = card.domainLabel;
+      domainBack.textContent = card.domainLabel;
+      domainFront.className = 'flashcard-domain ' + config.cssClass;
+      domainBack.className = 'flashcard-domain ' + config.cssClass;
+
+      // Labels
+      document.getElementById('cardLabelFront').textContent = 'Pergunta';
+      document.getElementById('cardLabelBack').textContent = 'Resposta';
+
+      // Text
+      document.getElementById('cardQuestion').textContent = card.q;
+      document.getElementById('cardAnswer').textContent = card.a;
+
+      // Nav buttons
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').disabled = currentIndex >= queue.length - 1;
+    }
+
+    // ============================================================
+    // CARD INTERACTIONS
+    // ============================================================
+    function flipCard() {
+      isFlipped = !isFlipped;
+      document.getElementById('flashcard').classList.toggle('flipped', isFlipped);
+    }
+
+    function prevCard() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderCard();
+      }
+    }
+
+    function nextCard() {
+      if (currentIndex < queue.length - 1) {
+        currentIndex++;
+        renderCard();
+      }
+    }
+
+    function rateCard(rating) {
+      if (queue.length === 0) return;
+
+      const card = queue[currentIndex];
+
+      // Remove current card from queue
+      queue.splice(currentIndex, 1);
+
+      if (rating === 0) {
+        // "Nao sabia" — reinsert 1 card ahead
+        const insertAt = Math.min(currentIndex + 1, queue.length);
+        queue.splice(insertAt, 0, card);
+        setCardProgress(card.id, { mastered: false, interval: 1 });
+      } else if (rating === 1) {
+        // "Quase" — reinsert 3 cards ahead
+        const insertAt = Math.min(currentIndex + 3, queue.length);
+        queue.splice(insertAt, 0, card);
+        setCardProgress(card.id, { mastered: false, interval: 3 });
+      } else {
+        // "Sabia" — push to end (mastered)
+        queue.push(card);
+        setCardProgress(card.id, { mastered: true, interval: 0 });
+      }
+
+      // Adjust index
+      if (currentIndex >= queue.length) {
+        currentIndex = 0;
+      }
+
+      if (queue.length === 0) {
+        document.getElementById('cardArea').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+      } else {
+        renderCard();
+      }
+
+      updateStats();
+    }
+
+    // ============================================================
+    // STATS
+    // ============================================================
+    function updateStats() {
+      const progress = loadProgress();
+      const domains = ['d1', 'd2', 'd3', 'd4', 'd5', 'golden'];
+      let totalMastered = 0;
+      const totalCards = ALL_CARDS.length;
+
+      const grid = document.getElementById('statsGrid');
+      grid.innerHTML = '';
+
+      domains.forEach(domain => {
+        const config = DOMAIN_CONFIG[domain];
+        const domainCards = ALL_CARDS.filter(c => c.domain === domain);
+        const mastered = domainCards.filter(c => progress[c.id] && progress[c.id].mastered).length;
+        totalMastered += mastered;
+        const pct = domainCards.length > 0 ? Math.round((mastered / domainCards.length) * 100) : 0;
+
+        const card = document.createElement('div');
+        card.className = 'stat-card';
+        card.innerHTML = `
+          <div class="stat-card-header">
+            <span class="stat-card-title">
+              <span class="stat-dot" style="background: ${config.color}"></span>
+              ${config.label}
+            </span>
+            <span class="stat-card-count">${mastered}/${domainCards.length}</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" style="width: ${pct}%; background: ${config.color}"></div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Overall
+      const overallPct = totalCards > 0 ? Math.round((totalMastered / totalCards) * 100) : 0;
+      document.getElementById('overallPct').textContent = overallPct + '%';
+      document.getElementById('overallBar').style.width = overallPct + '%';
+    }
+
+    function resetProgress() {
+      if (confirm('Tem certeza que deseja resetar todo o progresso?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        selectDeck(currentDeck);
+        updateStats();
+      }
+    }
+
+    // ============================================================
+    // KEYBOARD
+    // ============================================================
+    document.addEventListener('keydown', function(e) {
+      // Ignore if typing in input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          flipCard();
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          prevCard();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          nextCard();
+          break;
+        case 'Digit1':
+        case 'Numpad1':
+          e.preventDefault();
+          rateCard(0);
+          break;
+        case 'Digit2':
+        case 'Numpad2':
+          e.preventDefault();
+          rateCard(1);
+          break;
+        case 'Digit3':
+        case 'Numpad3':
+          e.preventDefault();
+          rateCard(2);
+          break;
+      }
+    });
+
+    // ============================================================
+    // DECK PILL CLICKS
+    // ============================================================
+    document.querySelectorAll('.deck-pill').forEach(pill => {
+      pill.addEventListener('click', () => selectDeck(pill.dataset.deck));
+    });
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    selectDeck('all');
+    updateStats();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cenario 1: Agente de Suporte ao Cliente - CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .scenario-header {
+      padding: var(--space-2xl) 0 var(--space-lg);
+    }
+    .scenario-header h1 {
+      font-size: 1.75rem;
+      margin-bottom: var(--space-sm);
+    }
+    .scenario-header p {
+      color: var(--text-secondary);
+    }
+    .progress-wrapper {
+      margin-bottom: var(--space-xl);
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+    .context-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    .context-card h4 {
+      color: var(--accent);
+      margin-bottom: var(--space-sm);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .context-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: var(--space-lg);
+    }
+    .options-grid {
+      display: grid;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+    .option-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+      display: flex;
+      gap: var(--space-md);
+      align-items: flex-start;
+    }
+    .option-card:hover:not(.disabled) {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-1px);
+    }
+    .option-card.disabled {
+      cursor: default;
+      opacity: 0.7;
+    }
+    .option-card.correct {
+      border-color: var(--success);
+      background: var(--success-subtle);
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+    }
+    .option-card.wrong {
+      border-color: var(--danger);
+      background: var(--danger-subtle);
+      opacity: 1;
+    }
+    .option-letter {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .correct .option-letter {
+      background: var(--success);
+      border-color: var(--success);
+      color: #000;
+    }
+    .wrong .option-letter {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #000;
+    }
+    .option-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .explanation-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+      display: none;
+      animation: fadeIn 0.4s var(--ease) both;
+    }
+    .explanation-panel.show {
+      display: block;
+    }
+    .explanation-panel h4 {
+      color: var(--success);
+      margin-bottom: var(--space-sm);
+      font-size: 0.9rem;
+    }
+    .explanation-panel p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .btn-next {
+      display: none;
+      margin: 0 auto var(--space-2xl);
+    }
+    .btn-next.show {
+      display: flex;
+    }
+    .step-container {
+      display: none;
+      animation: fadeIn 0.5s var(--ease) both;
+    }
+    .step-container.active {
+      display: block;
+    }
+    .score-panel {
+      text-align: center;
+      padding: var(--space-3xl) 0;
+      display: none;
+      animation: fadeIn 0.5s var(--ease) both;
+    }
+    .score-panel.active {
+      display: block;
+    }
+    .score-big {
+      font-size: 5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-sm);
+    }
+    .score-big.green { color: var(--success); }
+    .score-big.yellow { color: var(--warning); }
+    .score-big.red { color: var(--danger); }
+    .score-label {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-xl);
+    }
+    .score-actions {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../mapa/">Mapa</a></li>
+        <li><a href="./" class="active">Cenarios</a></li>
+        <li><a href="../flashcards/">Flashcards</a></li>
+        <li><a href="../camadas/">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container-narrow">
+    <div class="scenario-header">
+      <a href="./" style="font-size:0.85rem;color:var(--text-muted)">&#8592; Todos os cenarios</a>
+      <h1>Cenario 1: Agente de Suporte ao Cliente</h1>
+      <p>Domine decisoes arquiteturais para agentes de suporte com Agent SDK</p>
+      <div style="display:flex;gap:var(--space-xs);margin-top:var(--space-sm)">
+        <span class="badge badge-d1">D1 Agentic</span>
+        <span class="badge badge-d2">D2 Tools</span>
+        <span class="badge badge-d5">D5 Reliability</span>
+      </div>
+    </div>
+
+    <div class="progress-wrapper">
+      <div class="progress-label">
+        <span id="progress-text">Decisao 1 de 4</span>
+        <span id="score-text">Pontos: 0/0</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="quiz-area"></div>
+
+    <div class="score-panel" id="score-panel">
+      <div class="score-big" id="final-score"></div>
+      <div class="score-label" id="score-msg"></div>
+      <div class="score-actions">
+        <button class="btn btn-secondary" onclick="location.reload()">Tentar Novamente</button>
+        <a href="cenario-2.html" class="btn btn-primary">Proximo Cenario &#8594;</a>
+        <a href="./" class="btn btn-ghost">Todos os Cenarios</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 — Material de estudo para Claude Certified Architect
+    </div>
+  </footer>
+
+  <script>
+    const DATA = [
+      {
+        context: "Voce esta projetando um agente de suporte ao cliente usando o Agent SDK. O agente tem acesso a ferramentas MCP: get_customer, lookup_order, process_refund e escalate_to_human. Um cliente solicita um reembolso de R$50.000, mas a politica da empresa limita reembolsos automaticos a R$10.000.",
+        question: "Como impor o limite de reembolso de R$10k?",
+        options: [
+          "Adicionar instrucao no system prompt: \"nunca processe reembolsos acima de R$10k\"",
+          "Implementar um Hook PostToolUse que bloqueia process_refund quando valor > R$10k",
+          "Criar uma tool separada para reembolsos grandes com aprovacao manual",
+          "Confiar que o modelo vai respeitar o limite por conta propria"
+        ],
+        correct: 1,
+        explanation: "Hooks fornecem garantia deterministica de 100%. Instrucoes no prompt sao probabilisticas — o modelo pode ignorar ou interpretar de forma diferente. Esta e a Regra de Ouro #1 do exame: para compliance critico, use hooks (enforcement programatico), nao prompts."
+      },
+      {
+        context: "O agente encontrou 3 registros similares ao buscar o cliente. Os nomes sao parecidos e os enderecos de email tem o mesmo dominio corporativo. O agente precisa identificar qual e o cliente correto antes de prosseguir.",
+        question: "3 registros similares para o cliente. Como resolver?",
+        options: [
+          "Selecionar automaticamente o registro mais recente",
+          "Pedir ao cliente identificadores adicionais (CPF, numero do pedido, etc.)",
+          "Usar score de confianca baseado em similaridade dos campos",
+          "Escalar diretamente para um atendente humano"
+        ],
+        correct: 1,
+        explanation: "Quando ha multiplos matches, a melhor pratica e pedir mais dados ao usuario para desambiguacao. Heuristicas como 'mais recente' e scores de confianca sao proxies nao confiaveis. Escalar prematuramente desperdicaria recursos humanos para algo que o agente pode resolver com mais informacao."
+      },
+      {
+        context: "A conversa com o cliente ja tem 50 mensagens. O agente comecou a perder detalhes criticos como valores exatos, datas de pedido e numeros de protocolo mencionados nas primeiras mensagens. O cliente esta frustrado por ter que repetir informacoes.",
+        question: "Conversa com 50 mensagens, detalhes se perdendo. Como preservar?",
+        options: [
+          "Resumir a conversa periodicamente para reduzir tokens",
+          "Manter um bloco 'case facts' persistente com fatos criticos extraidos",
+          "Aumentar a janela de contexto do modelo",
+          "Iniciar uma nova sessao e pedir ao cliente para repetir"
+        ],
+        correct: 1,
+        explanation: "Progressive summarization perde dados numericos criticos (valores, datas, codigos). Um bloco 'case facts' extrai e preserva fatos criticos de forma estruturada. Aumentar a janela de contexto nao resolve o problema de 'lost-in-the-middle' e iniciar nova sessao perde todo o contexto."
+      },
+      {
+        context: "Durante o atendimento, o cliente pede explicitamente: \"Quero falar com um humano, por favor\". O agente ainda nao resolveu o problema, mas tem informacoes suficientes para fazer um resumo estruturado da situacao.",
+        question: "Cliente pede explicitamente para falar com humano.",
+        options: [
+          "Tentar resolver o problema primeiro antes de transferir",
+          "Transferir imediatamente com handoff estruturado contendo contexto completo",
+          "Perguntar ao cliente por que ele quer falar com um humano",
+          "Transferir sem fornecer contexto ao atendente humano"
+        ],
+        correct: 1,
+        explanation: "Pedido explicito de humano deve ser honrado imediatamente — tentar resolver primeiro ou perguntar por que gera frustacao. O handoff estruturado deve incluir: detalhes do cliente, causa raiz identificada, acoes ja tomadas e proximos passos recomendados. Transferir sem contexto forca o cliente a repetir tudo."
+      }
+    ];
+
+    let currentStep = 0;
+    let score = 0;
+
+    function render() {
+      const area = document.getElementById('quiz-area');
+      area.innerHTML = '';
+      if (currentStep >= DATA.length) {
+        showScore();
+        return;
+      }
+      const d = DATA[currentStep];
+      const div = document.createElement('div');
+      div.className = 'step-container active';
+      div.innerHTML = `
+        <div class="context-card">
+          <h4>Contexto</h4>
+          <p>${d.context}</p>
+        </div>
+        <div class="question-text">${d.question}</div>
+        <div class="options-grid" id="options">
+          ${d.options.map((o, i) => `
+            <div class="option-card" data-idx="${i}" onclick="choose(${i})">
+              <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+              <div class="option-text">${o}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="explanation-panel" id="explanation">
+          <h4>Explicacao</h4>
+          <p>${d.explanation}</p>
+        </div>
+        <button class="btn btn-primary btn-next" id="btn-next" onclick="nextStep()">Proxima Decisao &#8594;</button>
+      `;
+      area.appendChild(div);
+      updateProgress();
+    }
+
+    function choose(idx) {
+      const d = DATA[currentStep];
+      const cards = document.querySelectorAll('.option-card');
+      if (cards[0].classList.contains('disabled')) return;
+      cards.forEach((c, i) => {
+        c.classList.add('disabled');
+        if (i === d.correct) c.classList.add('correct');
+        if (i === idx && idx !== d.correct) c.classList.add('wrong');
+      });
+      if (idx === d.correct) score++;
+      document.getElementById('explanation').classList.add('show');
+      const btn = document.getElementById('btn-next');
+      btn.classList.add('show');
+      btn.textContent = currentStep < DATA.length - 1 ? 'Proxima Decisao \u2192' : 'Ver Resultado \u2192';
+      document.getElementById('score-text').textContent = `Pontos: ${score}/${currentStep + 1}`;
+    }
+
+    function nextStep() {
+      currentStep++;
+      render();
+    }
+
+    function updateProgress() {
+      document.getElementById('progress-text').textContent = `Decisao ${currentStep + 1} de ${DATA.length}`;
+      document.getElementById('progress-bar').style.width = `${(currentStep / DATA.length) * 100}%`;
+    }
+
+    function showScore() {
+      document.getElementById('quiz-area').innerHTML = '';
+      document.getElementById('progress-bar').style.width = '100%';
+      document.getElementById('progress-text').textContent = 'Completo!';
+      document.getElementById('score-text').textContent = `Pontos: ${score}/${DATA.length}`;
+      const panel = document.getElementById('score-panel');
+      const big = document.getElementById('final-score');
+      const msg = document.getElementById('score-msg');
+      big.textContent = `${score}/${DATA.length}`;
+      if (score >= 3) { big.className = 'score-big green'; msg.textContent = 'Excelente! Voce domina este cenario.'; }
+      else if (score === 2) { big.className = 'score-big yellow'; msg.textContent = 'Bom, mas revise os conceitos errados.'; }
+      else { big.className = 'score-big red'; msg.textContent = 'Revise este cenario com atencao.'; }
+      panel.classList.add('active');
+    }
+
+    render();
+  </script>
+</body>
+</html>

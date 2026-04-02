@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cenario 6: Extracao de Dados Estruturados - CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .scenario-header{padding:var(--space-2xl) 0 var(--space-lg)}.scenario-header h1{font-size:1.75rem;margin-bottom:var(--space-sm)}.scenario-header p{color:var(--text-secondary)}.progress-wrapper{margin-bottom:var(--space-xl)}.progress-label{display:flex;justify-content:space-between;font-size:.85rem;color:var(--text-secondary);margin-bottom:var(--space-sm)}.context-card{background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius-md);padding:var(--space-lg);margin-bottom:var(--space-xl)}.context-card h4{color:var(--accent);margin-bottom:var(--space-sm);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}.context-card p{color:var(--text-secondary);font-size:.95rem;line-height:1.6}.question-text{font-size:1.15rem;font-weight:600;margin-bottom:var(--space-lg)}.options-grid{display:grid;gap:var(--space-md);margin-bottom:var(--space-lg)}.option-card{background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius-md);padding:var(--space-lg);cursor:pointer;transition:all var(--duration) var(--ease);display:flex;gap:var(--space-md);align-items:flex-start}.option-card:hover:not(.disabled){border-color:var(--border-hover);background:var(--bg-card-hover);transform:translateY(-1px)}.option-card.disabled{cursor:default;opacity:.7}.option-card.correct{border-color:var(--success);background:var(--success-subtle);opacity:1;box-shadow:0 0 20px rgba(74,222,128,.15)}.option-card.wrong{border-color:var(--danger);background:var(--danger-subtle);opacity:1}.option-letter{flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg-surface);border:1px solid var(--border);font-weight:600;font-size:.85rem;color:var(--text-secondary)}.correct .option-letter{background:var(--success);border-color:var(--success);color:#000}.wrong .option-letter{background:var(--danger);border-color:var(--danger);color:#000}.option-text{font-size:.95rem;line-height:1.5}.explanation-panel{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-lg);margin-bottom:var(--space-lg);display:none;animation:fadeIn .4s var(--ease) both}.explanation-panel.show{display:block}.explanation-panel h4{color:var(--success);margin-bottom:var(--space-sm);font-size:.9rem}.explanation-panel p{color:var(--text-secondary);font-size:.9rem;line-height:1.6}.btn-next{display:none;margin:0 auto var(--space-2xl)}.btn-next.show{display:flex}.step-container{display:none;animation:fadeIn .5s var(--ease) both}.step-container.active{display:block}.score-panel{text-align:center;padding:var(--space-3xl) 0;display:none;animation:fadeIn .5s var(--ease) both}.score-panel.active{display:block}.score-big{font-size:5rem;font-weight:700;line-height:1;margin-bottom:var(--space-sm)}.score-big.green{color:var(--success)}.score-big.yellow{color:var(--warning)}.score-big.red{color:var(--danger)}.score-label{font-size:1.25rem;color:var(--text-secondary);margin-bottom:var(--space-xl)}.score-actions{display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../mapa/">Mapa</a></li>
+        <li><a href="./" class="active">Cenarios</a></li>
+        <li><a href="../flashcards/">Flashcards</a></li>
+        <li><a href="../camadas/">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container-narrow">
+    <div class="scenario-header">
+      <a href="./" style="font-size:0.85rem;color:var(--text-muted)">&#8592; Todos os cenarios</a>
+      <h1>Cenario 6: Extracao de Dados Estruturados</h1>
+      <p>Extraia dados estruturados de documentos com schemas JSON e validacao</p>
+      <div style="display:flex;gap:var(--space-xs);margin-top:var(--space-sm)">
+        <span class="badge badge-d4">D4 Prompts</span>
+        <span class="badge badge-d5">D5 Reliability</span>
+      </div>
+    </div>
+
+    <div class="progress-wrapper">
+      <div class="progress-label">
+        <span id="progress-text">Decisao 1 de 4</span>
+        <span id="score-text">Pontos: 0/0</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="quiz-area"></div>
+
+    <div class="score-panel" id="score-panel">
+      <div class="score-big" id="final-score"></div>
+      <div class="score-label" id="score-msg"></div>
+      <div class="score-actions">
+        <button class="btn btn-secondary" onclick="location.reload()">Tentar Novamente</button>
+        <a href="./" class="btn btn-primary">Todos os Cenarios</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 — Material de estudo para Claude Certified Architect
+    </div>
+  </footer>
+
+  <script>
+    const DATA = [
+      {
+        context: "Voce esta construindo um sistema de extracao de dados que processa faturas, contratos e documentos diversos. O sistema precisa retornar JSON consistente com campos especificos (fornecedor, valor, data, itens) para integracao com o ERP downstream.",
+        question: "Garantir output JSON consistente?",
+        options: [
+          "Adicionar 'retorne em formato JSON' no prompt",
+          "Usar tool_use com JSON schema definindo a estrutura esperada",
+          "Aplicar regex no output para extrair campos JSON",
+          "Fazer fine-tuning do modelo para retornar JSON"
+        ],
+        correct: 1,
+        explanation: "O tool_use com JSON schema e o mecanismo mais confiavel para output estruturado. O schema define tipos, campos obrigatorios e formatos, e o modelo e forcado a gerar output compativel. Instrucoes no prompt sao probabilisticas. Regex e fragil e quebra com variacoes de formato. Fine-tuning e excessivo e caro para este caso."
+      },
+      {
+        context: "O sistema esta extraindo dados de faturas e alguns campos retornam com formato errado: datas como '15 de marco' ao inves de '2024-03-15', valores como 'mil e quinhentos' ao inves de 1500.00. A validacao downstream rejeita esses registros.",
+        question: "Campos com formato errado. Retry ajuda?",
+        options: [
+          "Retry generico com a mesma mensagem",
+          "Retry incluindo os erros de validacao especificos no prompt de correcao",
+          "Retry nunca funciona para erros de formato",
+          "Trocar para um modelo mais capaz"
+        ],
+        correct: 1,
+        explanation: "Retry com erros de validacao especificos e eficaz para erros de formato. Ao incluir 'campo data retornou \"15 de marco\" mas o formato esperado e ISO 8601 (YYYY-MM-DD)', o modelo corrige com alta taxa de sucesso. Retry generico sem feedback nao melhora. Retry funciona sim para erros de formato. Trocar modelo e desproporcional."
+      },
+      {
+        context: "Ao extrair dados de contratos, alguns campos opcionais (como 'clausula de multa' ou 'garantia') nao estao presentes em todos os documentos. O sistema precisa tratar esses campos ausentes de forma que o schema JSON permaneca valido e o downstream saiba que o campo nao existe no documento.",
+        question: "Campo opcional ausente no documento. Retornar?",
+        options: [
+          "String vazia para campos ausentes",
+          "null com o campo marcado como nullable no schema",
+          "Valor plausivel baseado em documentos similares",
+          "Omitir o campo do JSON retornado"
+        ],
+        correct: 1,
+        explanation: "null com nullable no schema e a abordagem correta: indica explicitamente que o campo nao existe no documento, mantendo o schema valido. String vazia e ambigua (campo vazio ou ausente?). Valor plausivel e alucinacao — inventar dados que nao existem. Omitir campos quebra o schema e dificulta o processamento downstream."
+      },
+      {
+        context: "O sistema tem 97% de acuracia geral em extracao, mas ao analisar por categoria de documento, contratos de um fornecedor especifico tem apenas 80% de acuracia. O problema so foi descoberto apos reclamacoes do time financeiro.",
+        question: "97% geral mas 80% em contratos especificos. Detectar?",
+        options: [
+          "Monitorar apenas a acuracia geral do sistema",
+          "Implementar amostragem estratificada por tipo de documento e fornecedor",
+          "Aumentar o volume geral de testes",
+          "Implementar A/B testing entre modelos"
+        ],
+        correct: 1,
+        explanation: "Amostragem estratificada segmenta a avaliacao por categorias relevantes (tipo de documento, fornecedor, formato), revelando problemas que a media geral esconde. Monitorar so o geral mascara falhas em segmentos especificos. Mais volume sem estratificacao nao resolve. A/B testing compara modelos, nao detecta problemas em segmentos."
+      }
+    ];
+
+    let currentStep = 0, score = 0;
+    function render() {
+      const area = document.getElementById('quiz-area');
+      area.innerHTML = '';
+      if (currentStep >= DATA.length) { showScore(); return; }
+      const d = DATA[currentStep];
+      const div = document.createElement('div');
+      div.className = 'step-container active';
+      div.innerHTML = `<div class="context-card"><h4>Contexto</h4><p>${d.context}</p></div><div class="question-text">${d.question}</div><div class="options-grid" id="options">${d.options.map((o,i)=>`<div class="option-card" data-idx="${i}" onclick="choose(${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div><div class="option-text">${o}</div></div>`).join('')}</div><div class="explanation-panel" id="explanation"><h4>Explicacao</h4><p>${d.explanation}</p></div><button class="btn btn-primary btn-next" id="btn-next" onclick="nextStep()">Proxima Decisao &#8594;</button>`;
+      area.appendChild(div);
+      updateProgress();
+    }
+    function choose(idx) {
+      const d = DATA[currentStep];
+      const cards = document.querySelectorAll('.option-card');
+      if (cards[0].classList.contains('disabled')) return;
+      cards.forEach((c,i)=>{ c.classList.add('disabled'); if(i===d.correct) c.classList.add('correct'); if(i===idx&&idx!==d.correct) c.classList.add('wrong'); });
+      if (idx===d.correct) score++;
+      document.getElementById('explanation').classList.add('show');
+      const btn = document.getElementById('btn-next');
+      btn.classList.add('show');
+      btn.textContent = currentStep < DATA.length-1 ? 'Proxima Decisao \u2192' : 'Ver Resultado \u2192';
+      document.getElementById('score-text').textContent = `Pontos: ${score}/${currentStep+1}`;
+    }
+    function nextStep() { currentStep++; render(); }
+    function updateProgress() {
+      document.getElementById('progress-text').textContent = `Decisao ${currentStep+1} de ${DATA.length}`;
+      document.getElementById('progress-bar').style.width = `${(currentStep/DATA.length)*100}%`;
+    }
+    function showScore() {
+      document.getElementById('quiz-area').innerHTML = '';
+      document.getElementById('progress-bar').style.width = '100%';
+      document.getElementById('progress-text').textContent = 'Completo!';
+      document.getElementById('score-text').textContent = `Pontos: ${score}/${DATA.length}`;
+      const panel = document.getElementById('score-panel');
+      const big = document.getElementById('final-score');
+      const msg = document.getElementById('score-msg');
+      big.textContent = `${score}/${DATA.length}`;
+      if (score>=3){big.className='score-big green';msg.textContent='Excelente! Voce domina este cenario.';}
+      else if(score===2){big.className='score-big yellow';msg.textContent='Bom, mas revise os conceitos errados.';}
+      else{big.className='score-big red';msg.textContent='Revise este cenario com atencao.';}
+      panel.classList.add('active');
+    }
+    render();
+  </script>
+</body>
+</html>

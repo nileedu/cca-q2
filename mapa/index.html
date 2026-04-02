@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa de Conceitos — CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* Map-specific styles */
+    .map-container {
+      position: relative;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: 85vh;
+    }
+
+    .map-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .map-svg text {
+      font-family: var(--font);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .domain-node {
+      cursor: pointer;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .domain-node:hover .domain-circle {
+      filter: brightness(1.2);
+    }
+
+    .domain-circle {
+      transition: all 0.3s var(--ease);
+    }
+
+    .task-node {
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+    }
+
+    .task-node.visible {
+      opacity: 1;
+    }
+
+    .task-circle {
+      transition: all 0.2s var(--ease);
+    }
+
+    .task-node:hover .task-circle {
+      filter: brightness(1.3);
+    }
+
+    .cross-link {
+      stroke-dasharray: 6 4;
+      opacity: 0;
+      transition: opacity 0.4s var(--ease);
+    }
+
+    .cross-link.visible {
+      opacity: 0.35;
+    }
+
+    .task-line {
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+    }
+
+    .task-line.visible {
+      opacity: 0.4;
+    }
+
+    /* Tooltip panel */
+    .tooltip-panel {
+      position: fixed;
+      z-index: 200;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      max-width: 360px;
+      min-width: 280px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s var(--ease);
+    }
+
+    .tooltip-panel.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .tooltip-panel h4 {
+      margin-bottom: var(--space-sm);
+      font-size: 0.95rem;
+    }
+
+    .tooltip-panel ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tooltip-panel li {
+      position: relative;
+      padding-left: 1em;
+      margin-bottom: var(--space-xs);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .tooltip-panel li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .tooltip-panel .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .tooltip-panel .close-btn:hover {
+      color: var(--text);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md) var(--space-xl);
+      margin-top: var(--space-xl);
+      padding: var(--space-lg);
+      border-top: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-weight {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    /* Instructions */
+    .map-instructions {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    /* Mobile accordion fallback */
+    .accordion-view {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .map-container,
+      .map-instructions {
+        display: none;
+      }
+
+      .accordion-view {
+        display: block;
+      }
+
+      .accordion-domain {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-md);
+        overflow: hidden;
+      }
+
+      .accordion-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        background: var(--bg-card);
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: var(--font);
+        color: var(--text);
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: background var(--duration) var(--ease);
+      }
+
+      .accordion-header:hover {
+        background: var(--bg-card-hover);
+      }
+
+      .accordion-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .accordion-weight {
+        margin-left: auto;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+
+      .accordion-arrow {
+        margin-left: var(--space-sm);
+        color: var(--text-muted);
+        transition: transform 0.2s var(--ease);
+        font-size: 0.8rem;
+      }
+
+      .accordion-domain.open .accordion-arrow {
+        transform: rotate(180deg);
+      }
+
+      .accordion-body {
+        display: none;
+        padding: 0 var(--space-lg) var(--space-lg);
+        background: var(--bg-card);
+      }
+
+      .accordion-domain.open .accordion-body {
+        display: block;
+      }
+
+      .accordion-task {
+        padding: var(--space-sm) 0;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+      }
+
+      .accordion-task:last-child {
+        border-bottom: none;
+      }
+
+      .accordion-task-title {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 0;
+        transition: color var(--duration) var(--ease);
+      }
+
+      .accordion-task:hover .accordion-task-title {
+        color: var(--accent);
+      }
+
+      .accordion-task-detail {
+        display: none;
+        padding-top: var(--space-sm);
+      }
+
+      .accordion-task.open .accordion-task-detail {
+        display: block;
+      }
+
+      .accordion-task-detail li {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        padding-left: 1em;
+        position: relative;
+        margin-bottom: var(--space-xs);
+        list-style: none;
+      }
+
+      .accordion-task-detail li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.55em;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--text-muted);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav-brand-group"><a href="../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Inicio</a></li>
+      <li><a href="../mapa/" class="active">Mapa</a></li>
+      <li><a href="../cenarios/">Cenarios</a></li>
+      <li><a href="../flashcards/">Flashcards</a></li>
+      <li><a href="../camadas/">Camadas</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <h1 class="fade-in">Mapa de Conceitos</h1>
+    <p class="fade-in fade-in-delay-1">Navegue pelos 5 dominios do exame CCA-F</p>
+  </div>
+</header>
+
+<!-- Tooltip panel -->
+<div class="tooltip-panel" id="tooltipPanel">
+  <button class="close-btn" id="tooltipClose">&times;</button>
+  <h4 id="tooltipTitle"></h4>
+  <ul id="tooltipList"></ul>
+</div>
+
+<!-- Desktop SVG map -->
+<section class="section">
+  <div class="container">
+    <p class="map-instructions fade-in fade-in-delay-2">Clique em um dominio para expandir seus topicos. Clique em um topico para ver conceitos-chave.</p>
+    <div class="map-container fade-in fade-in-delay-3">
+      <svg class="map-svg" id="mapSvg" viewBox="0 0 1200 1200"></svg>
+    </div>
+
+    <!-- Mobile accordion -->
+    <div class="accordion-view" id="accordionView"></div>
+
+    <!-- Legend -->
+    <div class="legend fade-in fade-in-delay-3">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#f97316"></div>
+        <span>D1 Arquitetura Agentiqa</span>
+        <span class="legend-weight">27%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#8b5cf6"></div>
+        <span>D2 Ferramentas e MCP</span>
+        <span class="legend-weight">18%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#06b6d4"></div>
+        <span>D3 Claude Code</span>
+        <span class="legend-weight">20%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#10b981"></div>
+        <span>D4 Prompt Engineering</span>
+        <span class="legend-weight">20%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#ec4899"></div>
+        <span>D5 Contexto e Confiabilidade</span>
+        <span class="legend-weight">15%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    CCA-Q2 — Preparatorio Claude Certified Architect
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== NAV TOGGLE =====
+  var navToggle = document.getElementById('navToggle');
+  var navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', function() {
+    navLinks.classList.toggle('open');
+  });
+
+  // ===== DATA =====
+  var domains = [
+    {
+      id: 'd1',
+      label: 'Arquitetura Agentiqa\ne Orquestracao',
+      shortLabel: 'Arquitetura Agentiqa e Orquestracao',
+      weight: 27,
+      color: '#f97316',
+      tasks: [
+        {
+          id: 'd1t1', label: 'Loop agentiqu',
+          tips: [
+            'Ciclo: enviar request, inspecionar stop_reason (tool_use vs end_turn), executar tools, retornar resultados',
+            'Decisao dirigida pelo modelo (Claude escolhe tools) vs arvores de decisao pre-configuradas',
+            'Anti-patterns: parsing de linguagem natural para terminacao, caps arbitrarios de iteracao'
+          ]
+        },
+        {
+          id: 'd1t2', label: 'Multi-agente\nhub-spoke',
+          tips: [
+            'Arquitetura hub-and-spoke: coordenador gerencia toda comunicacao entre subagentes',
+            'Coordenador: decomposicao de tarefas, delegacao, agregacao de resultados, roteamento por complexidade',
+            'Risco: decomposicao muito granular gera cobertura incompleta'
+          ]
+        },
+        {
+          id: 'd1t3', label: 'Subagentes\ne contexto',
+          tips: [
+            'Agent tool (antes Task, renomeado v2.1.63) para spawning; allowedTools deve incluir "Agent"',
+            'Contexto do subagente deve ser fornecido explicitamente (sem heranca automatica)',
+            'fork_session para explorar abordagens divergentes a partir de baseline compartilhada'
+          ]
+        },
+        {
+          id: 'd1t4', label: 'Workflows e\nenforcement',
+          tips: [
+            'Enforcement programatico (hooks, prerequisite gates) vs orientacao por prompt',
+            'Compliance deterministica para operacoes financeiras requer hooks, nao prompts',
+            'Protocolos de handoff estruturados: detalhes do cliente, causa raiz, acoes recomendadas'
+          ]
+        },
+        {
+          id: 'd1t5', label: 'Hooks\nAgent SDK',
+          tips: [
+            'PostToolUse hooks: interceptam resultados de tools para transformacao antes do processamento pelo modelo',
+            'Hooks para enforcement de regras de compliance (bloquear reembolsos acima de limite)',
+            'Hooks = garantias deterministicas vs prompts = compliance probabilistica'
+          ]
+        },
+        {
+          id: 'd1t6', label: 'Decomposicao\nde tarefas',
+          tips: [
+            'Pipelines sequenciais fixos (prompt chaining) vs decomposicao adaptativa dinamica',
+            'Prompt chaining: analisar cada arquivo individualmente, depois integracao cross-file',
+            'Decomposicao adaptativa: gerar subtarefas baseadas em descobertas'
+          ]
+        },
+        {
+          id: 'd1t7', label: 'Sessoes\ne fork',
+          tips: [
+            '--resume <session-name> para continuar sessoes nomeadas',
+            'fork_session para branches de exploracao paralela',
+            'Nova sessao com resumo estruturado > resumir com resultados de tools obsoletos'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'd2',
+      label: 'Design de Ferramentas\ne Integracao MCP',
+      shortLabel: 'Design de Ferramentas e Integracao MCP',
+      weight: 18,
+      color: '#8b5cf6',
+      tasks: [
+        {
+          id: 'd2t1', label: 'Interfaces de\nferramentas',
+          tips: [
+            'Descricoes de ferramentas sao o mecanismo principal para selecao pelo LLM',
+            'Incluir formatos de entrada, exemplos, edge cases e limites nas descricoes',
+            'Descricoes ambiguas ou sobrepostas causam roteamento incorreto'
+          ]
+        },
+        {
+          id: 'd2t2', label: 'Erros estruturados\nMCP',
+          tips: [
+            'Padrao isError flag para comunicar falhas; categorias: transient, validation, business, permission',
+            'Erros uniformes impedem recuperacao apropriada',
+            'Retornar metadata estruturada: errorCategory, isRetryable, descricoes legsiveis'
+          ]
+        },
+        {
+          id: 'd2t3', label: 'Distribuicao\nde tools',
+          tips: [
+            'Muitas ferramentas (18 vs 4-5) degradam confiabilidade de selecao',
+            'Agentes com ferramentas fora do papel tendem a usa-las incorretamente',
+            'tool_choice: "auto", "any", ou selecao forcada para controle'
+          ]
+        },
+        {
+          id: 'd2t4', label: 'Servidores\nMCP',
+          tips: [
+            'Projeto: .mcp.json vs usuario: ~/.claude.json para configuracao',
+            'Expansao de variaveis de ambiente para credenciais (${GITHUB_TOKEN})',
+            'MCP resources para catalogos de conteudo (sumarios de issues, schemas de DB)'
+          ]
+        },
+        {
+          id: 'd2t5', label: 'Built-in\ntools',
+          tips: [
+            'Grep = busca por conteudo, Glob = matching de padroes de arquivo',
+            'Read/Write para arquivos completos, Edit para modificacoes direcionadas',
+            'Entendimento incremental: Grep -> Read -> follow imports'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'd3',
+      label: 'Configuracao e Fluxos\ndo Claude Code',
+      shortLabel: 'Configuracao e Fluxos do Claude Code',
+      weight: 20,
+      color: '#06b6d4',
+      tasks: [
+        {
+          id: 'd3t1', label: 'CLAUDE.md\nhierarquia',
+          tips: [
+            'Hierarquia: user-level (~/.claude/CLAUDE.md), project-level, directory-level',
+            '@import para referencias modulares; .claude/rules/ para regras por topico',
+            'Comando /memory para edicao rapida; dividir CLAUDE.md grande em .claude/rules/'
+          ]
+        },
+        {
+          id: 'd3t2', label: 'Commands\ne skills',
+          tips: [
+            'Comandos de projeto em .claude/commands/ (versionados) vs usuario em ~/.claude/commands/',
+            'Skills em .claude/skills/ com frontmatter SKILL.md: context: fork, allowed-tools',
+            'context: fork para isolamento; argument-hint para solicitar parametros'
+          ]
+        },
+        {
+          id: 'd3t3', label: 'Rules\npath-specific',
+          tips: [
+            'Arquivos .claude/rules/ com frontmatter YAML e campo paths',
+            'Regras path-scoped carregam apenas ao editar arquivos correspondentes',
+            'Glob patterns > CLAUDE.md directory-level para convencoes cross-directory'
+          ]
+        },
+        {
+          id: 'd3t4', label: 'Plan mode',
+          tips: [
+            'Plan mode: tarefas complexas, mudancas em larga escala, multiplas abordagens validas',
+            'Execucao direta: mudancas simples e bem-definidas',
+            'Subagente Explore para discovery verboso sem poluir contexto principal'
+          ]
+        },
+        {
+          id: 'd3t5', label: 'Refinamento\niterativo',
+          tips: [
+            'Exemplos concretos de input/output > descricoes em prosa',
+            'Iteracao test-driven: escrever testes primeiro, iterar compartilhando falhas',
+            'Padrao entrevista: Claude faz perguntas antes de implementar'
+          ]
+        },
+        {
+          id: 'd3t6', label: 'CI/CD',
+          tips: [
+            'Flag -p para modo nao-interativo; --output-format json para saida estruturada',
+            'CLAUDE.md fornece contexto para Claude Code invocado no CI',
+            'Isolamento de sessao: instancia de review separada da instancia de geracao'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'd4',
+      label: 'Engenharia de Prompt\ne Saida Estruturada',
+      shortLabel: 'Engenharia de Prompt e Saida Estruturada',
+      weight: 20,
+      color: '#10b981',
+      tasks: [
+        {
+          id: 'd4t1', label: 'Criterios\nexplicitos',
+          tips: [
+            'Criterios explicitos > instrucoes vagas ("flag quando comportamento contradiz codigo")',
+            'Instrucoes gerais "seja conservador" falham vs criterios categoricos especificos',
+            'Falsos positivos em uma categoria minam confianca em todas as categorias'
+          ]
+        },
+        {
+          id: 'd4t2', label: 'Few-shot\nprompting',
+          tips: [
+            'Few-shot = tecnica mais eficaz para output consistente quando instrucoes detalhadas falham',
+            'Demonstra tratamento de casos ambiguos e generalizacao de julgamento',
+            '2-4 exemplos direcionados com raciocinio para cenarios ambiguos'
+          ]
+        },
+        {
+          id: 'd4t3', label: 'JSON schemas\ne tool_use',
+          tips: [
+            'tool_use com JSON schemas = output estruturado mais confiavel (elimina erros de sintaxe)',
+            'tool_choice: "auto" (pode retornar texto), "any" (deve chamar tool), forced (tool especifica)',
+            'Schemas eliminam erros de sintaxe, mas NAO erros semanticos'
+          ]
+        },
+        {
+          id: 'd4t4', label: 'Retry e\nvalidacao',
+          tips: [
+            'Retry-with-error-feedback: anexar erros de validacao especificos para guiar correcao',
+            'Retries ineficazes quando informacao ausente na fonte (vs erros de formato)',
+            'Campo detected_pattern para analise sistematica de falsos positivos'
+          ]
+        },
+        {
+          id: 'd4t5', label: 'Batch\nprocessing',
+          tips: [
+            'Message Batches API: 50% de reducao de custo, janela de ate 24h, sem SLA de latencia',
+            'Batch = apenas workloads nao-bloqueantes (nao para pre-merge checks)',
+            'custom_id para correlacionar pares request/response; resubmeter apenas documentos falhos'
+          ]
+        },
+        {
+          id: 'd4t6', label: 'Review\nmulti-instancia',
+          tips: [
+            'Self-review limitado: modelo retem contexto de raciocinio, menos provavel questionar proprias decisoes',
+            'Instancias independentes de review > self-review ou extended thinking',
+            'Multi-pass: analise local per-file + passes de integracao cross-file'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'd5',
+      label: 'Gerenciamento de\nContexto e Confiab.',
+      shortLabel: 'Gerenciamento de Contexto e Confiabilidade',
+      weight: 15,
+      color: '#ec4899',
+      tasks: [
+        {
+          id: 'd5t1', label: 'Contexto e\ninformacao',
+          tips: [
+            'Sumarizacao progressiva perde: valores numericos, datas, expectativas condensadas',
+            'Efeito "lost in the middle": modelos processam inicio e fim melhor, podem omitir meio',
+            'Extrair fatos transacionais em bloco persistente "case facts"; trim de outputs verbosos'
+          ]
+        },
+        {
+          id: 'd5t2', label: 'Escalacao e\nambiguidade',
+          tips: [
+            'Gatilhos: cliente pede humano, lacunas de politica, incapacidade de progredir',
+            'Escalacao baseada em sentimento e scores de confianca sao proxies nao confiaveis',
+            'Multiplos matches de cliente: solicitar identificadores adicionais (nao selecao heuristica)'
+          ]
+        },
+        {
+          id: 'd5t3', label: 'Propagacao\nde erros',
+          tips: [
+            'Contexto de erro estruturado: tipo de falha, query tentada, resultados parciais, alternativas',
+            'Distinguir falhas de acesso (timeouts) de resultados vazios validos (sem matches)',
+            'Anti-patterns: status generico, supressao silenciosa, terminacao total'
+          ]
+        },
+        {
+          id: 'd5t4', label: 'Codebases\ngrandes',
+          tips: [
+            'Degradacao de contexto: respostas inconsistentes, referencia a "padroes tipicos" ao inves de especificos',
+            'Scratchpad files para persistir achados-chave entre limites de contexto',
+            'Delegacao para subagentes para exploracao verbosa; /compact para reducao de contexto'
+          ]
+        },
+        {
+          id: 'd5t5', label: 'Human\nreview',
+          tips: [
+            'Acuracia agregada (97%) pode mascarar performance ruim em tipos/campos especificos',
+            'Amostragem estratificada aleatoria para medicao de taxa de erro',
+            'Scores de confianca por campo calibrados com conjuntos de validacao rotulados'
+          ]
+        },
+        {
+          id: 'd5t6', label: 'Proveniencia\nde fontes',
+          tips: [
+            'Atribuicao de fonte perdida durante sumarizacao sem mapeamentos claim-source',
+            'Estatisticas conflitantes: anotar conflitos com atribuicao de fonte (nao escolher arbitrariamente)',
+            'Dados temporais: incluir datas de publicacao/coleta para prevenir falsas contradicoes'
+          ]
+        }
+      ]
+    }
+  ];
+
+  // Cross-domain connections
+  var crossLinks = [
+    { from: 'd1t5', to: 'd2t2', label: 'Hooks / Erros' },
+    { from: 'd2t3', to: 'd1t6', label: 'Tools / Decomposicao' },
+    { from: 'd3t1', to: 'd3t6', label: 'CLAUDE.md / CI-CD' },
+    { from: 'd4t2', to: 'd5t2', label: 'Few-shot / Escalacao' },
+    { from: 'd4t6', to: 'd3t6', label: 'Review / CI-CD' },
+    { from: 'd5t3', to: 'd2t2', label: 'Erros / MCP' }
+  ];
+
+  // ===== SVG MAP =====
+  var svg = document.getElementById('mapSvg');
+  var ns = 'http://www.w3.org/2000/svg';
+  var cx = 600, cy = 600;
+  var domainRadius = 340;
+  var taskRadius = 190;
+  var expandedDomain = null;
+  var nodePositions = {};
+
+  // Weight-based node sizing
+  function domainSize(w) {
+    return 42 + (w - 15) * 2.2;
+  }
+
+  // Calculate domain positions (radial, starting from top)
+  var domainAngles = [];
+  for (var i = 0; i < 5; i++) {
+    domainAngles.push(-Math.PI / 2 + (i * 2 * Math.PI / 5));
+  }
+
+  // Create groups for layers
+  var layerLinks = createGroup('layer-links');
+  var layerCrossLinks = createGroup('layer-cross-links');
+  var layerTaskLines = createGroup('layer-task-lines');
+  var layerNodes = createGroup('layer-nodes');
+
+  function createGroup(id) {
+    var g = document.createElementNS(ns, 'g');
+    g.setAttribute('id', id);
+    svg.appendChild(g);
+    return g;
+  }
+
+  // Draw domain nodes
+  domains.forEach(function(d, i) {
+    var angle = domainAngles[i];
+    var x = cx + domainRadius * Math.cos(angle);
+    var y = cy + domainRadius * Math.sin(angle);
+    var r = domainSize(d.weight);
+
+    d._x = x;
+    d._y = y;
+    d._r = r;
+    d._angle = angle;
+    nodePositions[d.id] = { x: x, y: y };
+
+    var g = document.createElementNS(ns, 'g');
+    g.setAttribute('class', 'domain-node');
+    g.setAttribute('data-domain', d.id);
+
+    // Glow filter
+    var glow = document.createElementNS(ns, 'circle');
+    glow.setAttribute('cx', x);
+    glow.setAttribute('cy', y);
+    glow.setAttribute('r', r + 8);
+    glow.setAttribute('fill', d.color);
+    glow.setAttribute('opacity', '0.15');
+    g.appendChild(glow);
+
+    // Main circle
+    var circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('class', 'domain-circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', d.color);
+    circle.setAttribute('opacity', '0.2');
+    circle.setAttribute('stroke', d.color);
+    circle.setAttribute('stroke-width', '2');
+    g.appendChild(circle);
+
+    // Weight text
+    var wt = document.createElementNS(ns, 'text');
+    wt.setAttribute('x', x);
+    wt.setAttribute('y', y - r - 12);
+    wt.setAttribute('text-anchor', 'middle');
+    wt.setAttribute('fill', d.color);
+    wt.setAttribute('font-size', '15');
+    wt.setAttribute('font-weight', '700');
+    wt.textContent = d.weight + '%';
+    g.appendChild(wt);
+
+    // Domain label (multi-line)
+    var lines = d.label.split('\n');
+    lines.forEach(function(line, li) {
+      var t = document.createElementNS(ns, 'text');
+      t.setAttribute('x', x);
+      t.setAttribute('y', y + (li - (lines.length - 1) / 2) * 16);
+      t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('fill', '#e8e9ed');
+      t.setAttribute('font-size', '14');
+      t.setAttribute('font-weight', '600');
+      t.textContent = line;
+      g.appendChild(t);
+    });
+
+    // Domain ID badge
+    var badge = document.createElementNS(ns, 'text');
+    badge.setAttribute('x', x);
+    badge.setAttribute('y', y + ((lines.length - 1) / 2) * 16 + 20);
+    badge.setAttribute('text-anchor', 'middle');
+    badge.setAttribute('fill', d.color);
+    badge.setAttribute('font-size', '10');
+    badge.setAttribute('font-weight', '600');
+    badge.setAttribute('opacity', '0.7');
+    badge.textContent = 'D' + (i + 1);
+    g.appendChild(badge);
+
+    // Click handler
+    g.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleDomain(d.id);
+    });
+
+    layerNodes.appendChild(g);
+
+    // Pre-create task nodes (hidden)
+    d.tasks.forEach(function(task, ti) {
+      var taskAngle = d._angle - (d.tasks.length - 1) * 0.18 / 2 + ti * 0.18;
+      var tx = cx + (domainRadius + taskRadius) * Math.cos(taskAngle);
+      var ty = cy + (domainRadius + taskRadius) * Math.sin(taskAngle);
+      task._x = tx;
+      task._y = ty;
+      nodePositions[task.id] = { x: tx, y: ty };
+
+      // Connection line
+      var line = document.createElementNS(ns, 'line');
+      line.setAttribute('class', 'task-line');
+      line.setAttribute('data-domain', d.id);
+      line.setAttribute('x1', x);
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', tx);
+      line.setAttribute('y2', ty);
+      line.setAttribute('stroke', d.color);
+      line.setAttribute('stroke-width', '1');
+      line.setAttribute('opacity', '0.3');
+      layerTaskLines.appendChild(line);
+
+      // Task group
+      var tg = document.createElementNS(ns, 'g');
+      tg.setAttribute('class', 'task-node');
+      tg.setAttribute('data-domain', d.id);
+      tg.setAttribute('data-task', task.id);
+
+      var tr = 34;
+
+      // Task circle bg
+      var tc = document.createElementNS(ns, 'circle');
+      tc.setAttribute('class', 'task-circle');
+      tc.setAttribute('cx', tx);
+      tc.setAttribute('cy', ty);
+      tc.setAttribute('r', tr);
+      tc.setAttribute('fill', d.color);
+      tc.setAttribute('opacity', '0.12');
+      tc.setAttribute('stroke', d.color);
+      tc.setAttribute('stroke-width', '1.5');
+      tg.appendChild(tc);
+
+      // Task label
+      var tLines = task.label.split('\n');
+      tLines.forEach(function(tl, tli) {
+        var tt = document.createElementNS(ns, 'text');
+        tt.setAttribute('x', tx);
+        tt.setAttribute('y', ty + (tli - (tLines.length - 1) / 2) * 13);
+        tt.setAttribute('text-anchor', 'middle');
+        tt.setAttribute('fill', '#e8e9ed');
+        tt.setAttribute('font-size', '11');
+        tt.setAttribute('font-weight', '500');
+        tt.textContent = tl;
+        tg.appendChild(tt);
+      });
+
+      // Click handler for tooltip
+      tg.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showTooltip(task, d.color, e);
+      });
+
+      layerNodes.appendChild(tg);
+    });
+  });
+
+  // Draw cross-links (hidden initially)
+  crossLinks.forEach(function(cl) {
+    var line = document.createElementNS(ns, 'line');
+    line.setAttribute('class', 'cross-link');
+    line.setAttribute('data-from', cl.from);
+    line.setAttribute('data-to', cl.to);
+    line.setAttribute('x1', nodePositions[cl.from].x);
+    line.setAttribute('y1', nodePositions[cl.from].y);
+    line.setAttribute('x2', nodePositions[cl.to].x);
+    line.setAttribute('y2', nodePositions[cl.to].y);
+    line.setAttribute('stroke', '#6b7085');
+    line.setAttribute('stroke-width', '1.5');
+    layerCrossLinks.appendChild(line);
+  });
+
+  // Toggle domain expansion
+  function toggleDomain(domainId) {
+    if (expandedDomain === domainId) {
+      collapseDomain(domainId);
+      expandedDomain = null;
+    } else {
+      if (expandedDomain) {
+        collapseDomain(expandedDomain);
+      }
+      expandDomain(domainId);
+      expandedDomain = domainId;
+    }
+  }
+
+  function expandDomain(domainId) {
+    var taskNodes = svg.querySelectorAll('.task-node[data-domain="' + domainId + '"]');
+    var taskLines = svg.querySelectorAll('.task-line[data-domain="' + domainId + '"]');
+    taskNodes.forEach(function(n) { n.classList.add('visible'); });
+    taskLines.forEach(function(l) { l.classList.add('visible'); });
+
+    // Show relevant cross-links
+    crossLinks.forEach(function(cl) {
+      if (cl.from.indexOf(domainId) === 0 || cl.to.indexOf(domainId) === 0) {
+        var fromDomain = cl.from.substring(0, 2);
+        var toDomain = cl.to.substring(0, 2);
+        var fromExpanded = fromDomain === domainId || fromDomain === expandedDomain;
+        var toExpanded = toDomain === domainId || toDomain === expandedDomain;
+        // Show if both ends are of the same domain or both domains expanded
+        if (fromDomain === toDomain || (fromExpanded && toExpanded)) {
+          var el = svg.querySelector('.cross-link[data-from="' + cl.from + '"][data-to="' + cl.to + '"]');
+          if (el) el.classList.add('visible');
+        }
+      }
+    });
+  }
+
+  function collapseDomain(domainId) {
+    var taskNodes = svg.querySelectorAll('.task-node[data-domain="' + domainId + '"]');
+    var taskLines = svg.querySelectorAll('.task-line[data-domain="' + domainId + '"]');
+    taskNodes.forEach(function(n) { n.classList.remove('visible'); });
+    taskLines.forEach(function(l) { l.classList.remove('visible'); });
+
+    // Hide cross-links related to this domain
+    svg.querySelectorAll('.cross-link.visible').forEach(function(el) {
+      var from = el.getAttribute('data-from');
+      var to = el.getAttribute('data-to');
+      if (from.indexOf(domainId) === 0 || to.indexOf(domainId) === 0) {
+        el.classList.remove('visible');
+      }
+    });
+
+    hideTooltip();
+  }
+
+  // ===== TOOLTIP =====
+  var tooltipPanel = document.getElementById('tooltipPanel');
+  var tooltipTitle = document.getElementById('tooltipTitle');
+  var tooltipList = document.getElementById('tooltipList');
+  var tooltipClose = document.getElementById('tooltipClose');
+
+  function showTooltip(task, color, event) {
+    tooltipTitle.textContent = task.label.replace('\n', ' ');
+    tooltipTitle.style.color = color;
+    tooltipList.innerHTML = '';
+    task.tips.forEach(function(tip) {
+      var li = document.createElement('li');
+      li.textContent = tip;
+      tooltipList.appendChild(li);
+    });
+
+    tooltipPanel.classList.add('active');
+
+    // Position near click but within viewport
+    var px = event.clientX + 16;
+    var py = event.clientY - 20;
+    var pw = 360;
+    var ph = 200;
+    if (px + pw > window.innerWidth - 20) {
+      px = event.clientX - pw - 16;
+    }
+    if (py + ph > window.innerHeight - 20) {
+      py = window.innerHeight - ph - 20;
+    }
+    if (py < 80) py = 80;
+    if (px < 10) px = 10;
+
+    tooltipPanel.style.left = px + 'px';
+    tooltipPanel.style.top = py + 'px';
+  }
+
+  function hideTooltip() {
+    tooltipPanel.classList.remove('active');
+  }
+
+  tooltipClose.addEventListener('click', function(e) {
+    e.stopPropagation();
+    hideTooltip();
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!tooltipPanel.contains(e.target)) {
+      hideTooltip();
+    }
+  });
+
+  // ===== MOBILE ACCORDION =====
+  var accordionView = document.getElementById('accordionView');
+  domains.forEach(function(d, di) {
+    var section = document.createElement('div');
+    section.className = 'accordion-domain';
+
+    var header = document.createElement('button');
+    header.className = 'accordion-header';
+    header.innerHTML = '<span class="accordion-dot" style="background:' + d.color + '"></span>' +
+      '<span>D' + (di + 1) + ' — ' + d.shortLabel + '</span>' +
+      '<span class="accordion-weight">' + d.weight + '%</span>' +
+      '<span class="accordion-arrow">&#9660;</span>';
+
+    header.addEventListener('click', function() {
+      section.classList.toggle('open');
+    });
+
+    var body = document.createElement('div');
+    body.className = 'accordion-body';
+
+    d.tasks.forEach(function(task) {
+      var taskEl = document.createElement('div');
+      taskEl.className = 'accordion-task';
+
+      var title = document.createElement('div');
+      title.className = 'accordion-task-title';
+      title.textContent = task.label.replace('\n', ' ');
+      title.style.color = d.color;
+
+      var detail = document.createElement('div');
+      detail.className = 'accordion-task-detail';
+      var ul = document.createElement('ul');
+      task.tips.forEach(function(tip) {
+        var li = document.createElement('li');
+        li.textContent = tip;
+        ul.appendChild(li);
+      });
+      detail.appendChild(ul);
+
+      taskEl.appendChild(title);
+      taskEl.appendChild(detail);
+      taskEl.addEventListener('click', function() {
+        taskEl.classList.toggle('open');
+      });
+
+      body.appendChild(taskEl);
+    });
+
+    section.appendChild(header);
+    section.appendChild(body);
+    accordionView.appendChild(section);
+  });
+
+})();
+</script>
+</body>
+</html>

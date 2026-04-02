@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCA-Q2 — Claude Certified Architect | Preparatorio Interativo</title>
+  <meta name="description" content="Preparatorio interativo para o exame Claude Certified Architect. Aprendizado progressivo com mapa visual, cenarios e flashcards.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Landing Page Styles ── */
+
+    /* Scroll progress bar */
+    .scroll-progress { width: 0%; }
+
+    /* Hero enhancements */
+    .hero {
+      padding: 6rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(212, 115, 76, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0.35em 1em;
+      background: var(--accent-subtle);
+      border: 1px solid rgba(212, 115, 76, 0.2);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-lg);
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: var(--space-xs);
+    }
+
+    .hero h1 .accent {
+      background: linear-gradient(135deg, var(--accent) 0%, #e8956e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.35rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-bottom: var(--space-md);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      max-width: 560px;
+      margin: 0 auto var(--space-2xl);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions .btn {
+      padding: 0.8em 1.8em;
+      font-size: 1rem;
+    }
+
+    .hero-actions .btn-primary {
+      box-shadow: 0 4px 24px rgba(212, 115, 76, 0.25);
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Section headers */
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .section-header .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: var(--space-sm);
+    }
+
+    .section-header .section-title {
+      margin-bottom: var(--space-sm);
+    }
+
+    .section-header .section-subtitle {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* Stat cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: var(--space-xl) var(--space-lg);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: var(--space-xs);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Domain bars */
+    .domains-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .domain-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: all var(--duration) var(--ease);
+    }
+
+    .domain-item:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .domain-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .domain-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .domain-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .domain-bar-wrap {
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: 999px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .domain-bar {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 1s var(--ease);
+    }
+
+    .domain-weight {
+      font-size: 1.1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 3ch;
+      text-align: right;
+    }
+
+    /* Format cards */
+    .format-card {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .format-card .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .format-card h3 {
+      margin-bottom: var(--space-sm);
+    }
+
+    .format-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: var(--space-lg);
+      flex-grow: 1;
+    }
+
+    .format-card .btn {
+      align-self: flex-start;
+    }
+
+    .format-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      opacity: 0;
+      transition: opacity var(--duration) var(--ease);
+    }
+
+    .format-card:hover::after {
+      opacity: 1;
+    }
+
+    .format-card.f1 .card-icon { background: var(--d1-subtle); color: var(--d1); }
+    .format-card.f1::after { background: var(--d1); }
+    .format-card.f2 .card-icon { background: var(--d2-subtle); color: var(--d2); }
+    .format-card.f2::after { background: var(--d2); }
+    .format-card.f3 .card-icon { background: var(--d4-subtle); color: var(--d4); }
+    .format-card.f3::after { background: var(--d4); }
+
+    /* Layers / Camadas */
+    .layers-track {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .layers-track::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .layer-item {
+      display: flex;
+      gap: var(--space-lg);
+      padding: var(--space-lg) 0;
+      position: relative;
+    }
+
+    .layer-marker {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+      z-index: 1;
+      border: 3px solid var(--bg);
+    }
+
+    .layer-content {
+      padding-top: var(--space-sm);
+    }
+
+    .layer-content h3 {
+      margin-bottom: var(--space-xs);
+    }
+
+    .layer-content p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .layer-item:nth-child(1) .layer-marker { background: var(--d1-subtle); color: var(--d1); border-color: var(--d1); }
+    .layer-item:nth-child(2) .layer-marker { background: var(--d2-subtle); color: var(--d2); border-color: var(--d2); }
+    .layer-item:nth-child(3) .layer-marker { background: var(--d3-subtle); color: var(--d3); border-color: var(--d3); }
+    .layer-item:nth-child(4) .layer-marker { background: var(--d4-subtle); color: var(--d4); border-color: var(--d4); }
+    .layer-item:nth-child(5) .layer-marker { background: var(--d5-subtle); color: var(--d5); border-color: var(--d5); }
+
+    /* Golden rules */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .rule-card {
+      position: relative;
+      padding-left: calc(var(--space-xl) + 48px);
+    }
+
+    .rule-number {
+      position: absolute;
+      left: var(--space-xl);
+      top: var(--space-xl);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0.25;
+      line-height: 1;
+    }
+
+    .rule-card h3 {
+      margin-bottom: var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .rule-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* Section divider glow */
+    .section-divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+      margin: 0;
+    }
+
+    /* Footer enhancements */
+    .footer {
+      padding: var(--space-2xl) 0;
+    }
+
+    .footer p + p {
+      margin-top: var(--space-sm);
+    }
+
+    /* Responsive overrides */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .hero-subtitle { font-size: 1.1rem; }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+
+      .domain-item {
+        grid-template-columns: 1fr 48px;
+      }
+
+      .rules-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .layers-track::before {
+        left: 19px;
+      }
+
+      .layer-marker {
+        width: 40px;
+        height: 40px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ── Chat Widget Styles ── */
+    .chat-section {
+      padding: var(--space-2xl) 0;
+    }
+
+    .chat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .chat-card-header {
+      padding: var(--space-lg) var(--space-xl);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-card-header h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+    }
+
+    .chat-card-header p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .chat-messages {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: var(--space-lg) var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      scroll-behavior: smooth;
+    }
+
+    .chat-msg {
+      max-width: 85%;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .chat-msg.assistant {
+      align-self: flex-start;
+      background: var(--bg-surface);
+      border-left: 3px solid var(--accent);
+    }
+
+    .chat-msg.user {
+      align-self: flex-end;
+      background: var(--accent-subtle);
+      color: var(--text);
+      border: 1px solid rgba(212, 115, 76, 0.2);
+    }
+
+    .chat-input-area {
+      display: flex;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-xl);
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: 0.6em 1em;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--duration) var(--ease);
+    }
+
+    .chat-input-area input:focus {
+      border-color: var(--accent);
+    }
+
+    .chat-input-area input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .chat-send-btn {
+      padding: 0.6em 1.2em;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity var(--duration) var(--ease);
+    }
+
+    .chat-send-btn:hover {
+      opacity: 0.85;
+    }
+
+    .chat-chips {
+      display: flex;
+      gap: var(--space-sm);
+      padding: 0 var(--space-xl) var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .chat-chip {
+      padding: 0.35em 0.9em;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+    }
+
+    .chat-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    @media (max-width: 768px) {
+      .chat-card-header,
+      .chat-messages,
+      .chat-input-area,
+      .chat-chips {
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
+    <div class="container">
+      <div class="nav-brand-group"><a href="index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Inicio</a></li>
+        <li><a href="mapa/index.html">Mapa</a></li>
+        <li><a href="cenarios/index.html">Cenarios</a></li>
+        <li><a href="flashcards/index.html">Flashcards</a></li>
+        <li><a href="camadas/index.html">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="fade-in">
+          <span class="hero-label">Preparatorio Q2 2026</span>
+        </div>
+        <h1 class="fade-in fade-in-delay-1">
+          <span class="accent">CCA-Q2</span>
+        </h1>
+        <p class="hero-subtitle fade-in fade-in-delay-1">
+          Claude Certified Architect &mdash; Preparatorio Interativo
+        </p>
+        <p class="hero-desc fade-in fade-in-delay-2">
+          Domine os 5 dominios do exame CCA com aprendizado progressivo em 5 camadas,
+          cenarios praticos de arquitetura e flashcards com repeticao espacada.
+        </p>
+        <div class="hero-actions fade-in fade-in-delay-3">
+          <a href="mapa/index.html" class="btn btn-primary">Comecar pelo Mapa</a>
+          <a href="cenarios/index.html" class="btn btn-secondary">Ver Cenarios</a>
+          <a href="camadas/index.html" class="btn btn-secondary">Camadas</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Study Chat -->
+    <section class="chat-section" id="chat">
+      <div class="container">
+        <div class="chat-card">
+          <div class="chat-card-header">
+            <h2>Tire suas duvidas</h2>
+            <p>Pergunte sobre qualquer topico do exame CCA-F</p>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg assistant">Ola! Sou o assistente de estudos CCA. Pergunte sobre qualquer topico do exame — loop agentico, hooks, multi-agente, ferramentas, MCP, CLAUDE.md e muito mais.</div>
+          </div>
+          <div class="chat-chips" id="chatChips">
+            <button class="chat-chip" data-question="O que sao hooks?">O que sao hooks?</button>
+            <button class="chat-chip" data-question="Regras de Ouro">Regras de Ouro</button>
+            <button class="chat-chip" data-question="Como funciona o loop agentico?">Como funciona o loop agentico?</button>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Digite sua pergunta..." autocomplete="off">
+            <button class="chat-send-btn" id="chatSend">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Exam Overview -->
+    <section class="section" id="overview">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Visao Geral do Exame</span>
+          <h2 class="section-title">Numeros que Importam</h2>
+          <p class="section-subtitle">Entenda a estrutura do exame antes de mergulhar no conteudo.</p>
+        </div>
+
+        <div class="stats-grid reveal">
+          <div class="card stat-card">
+            <div class="stat-number">60</div>
+            <div class="stat-label">Questoes</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-number">120</div>
+            <div class="stat-label">Minutos</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-number">720</div>
+            <div class="stat-label">Nota minima / 1000</div>
+          </div>
+        </div>
+
+        <div class="section-header reveal">
+          <h2 class="section-title">5 Dominios do Exame</h2>
+          <p class="section-subtitle">Cada dominio tem um peso diferente. Foque proporcionalmente.</p>
+        </div>
+
+        <div class="domains-list reveal">
+          <div class="domain-item">
+            <div class="domain-info">
+              <div class="domain-name">
+                <span class="domain-dot" style="background: var(--d1)"></span>
+                Arquitetura Agenticae Orquestracao
+              </div>
+              <div class="domain-bar-wrap">
+                <div class="domain-bar" data-width="27" style="background: var(--d1)"></div>
+              </div>
+            </div>
+            <div class="domain-weight" style="color: var(--d1)">27%</div>
+          </div>
+
+          <div class="domain-item">
+            <div class="domain-info">
+              <div class="domain-name">
+                <span class="domain-dot" style="background: var(--d3)"></span>
+                Configuracao e Fluxos do Claude Code
+              </div>
+              <div class="domain-bar-wrap">
+                <div class="domain-bar" data-width="20" style="background: var(--d3)"></div>
+              </div>
+            </div>
+            <div class="domain-weight" style="color: var(--d3)">20%</div>
+          </div>
+
+          <div class="domain-item">
+            <div class="domain-info">
+              <div class="domain-name">
+                <span class="domain-dot" style="background: var(--d4)"></span>
+                Engenharia de Prompt e Saida Estruturada
+              </div>
+              <div class="domain-bar-wrap">
+                <div class="domain-bar" data-width="20" style="background: var(--d4)"></div>
+              </div>
+            </div>
+            <div class="domain-weight" style="color: var(--d4)">20%</div>
+          </div>
+
+          <div class="domain-item">
+            <div class="domain-info">
+              <div class="domain-name">
+                <span class="domain-dot" style="background: var(--d2)"></span>
+                Design de Ferramentas e Integracao MCP
+              </div>
+              <div class="domain-bar-wrap">
+                <div class="domain-bar" data-width="18" style="background: var(--d2)"></div>
+              </div>
+            </div>
+            <div class="domain-weight" style="color: var(--d2)">18%</div>
+          </div>
+
+          <div class="domain-item">
+            <div class="domain-info">
+              <div class="domain-name">
+                <span class="domain-dot" style="background: var(--d5)"></span>
+                Gerenciamento de Contexto e Confiabilidade
+              </div>
+              <div class="domain-bar-wrap">
+                <div class="domain-bar" data-width="15" style="background: var(--d5)"></div>
+              </div>
+            </div>
+            <div class="domain-weight" style="color: var(--d5)">15%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 3 Formats -->
+    <section class="section" id="formats">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Formatos de Aprendizado</span>
+          <h2 class="section-title">3 Formas de Estudar</h2>
+          <p class="section-subtitle">Combine formatos para fixar o conteudo de maneira profunda e duradoura.</p>
+        </div>
+
+        <div class="card-grid reveal">
+          <a href="mapa/index.html" class="card format-card f1">
+            <div class="card-icon">M</div>
+            <h3>Mapa Visual Interativo</h3>
+            <p>
+              Navegue pelos 5 dominios e seus topicos em um mapa visual.
+              Veja conexoes entre conceitos e acompanhe seu progresso por dominio.
+            </p>
+            <span class="btn btn-ghost">Explorar mapa</span>
+          </a>
+
+          <a href="cenarios/index.html" class="card format-card f2">
+            <div class="card-icon">C</div>
+            <h3>Simulador de Cenarios</h3>
+            <p>
+              Enfrente cenarios reais de arquitetura. Cada cenario apresenta um problema,
+              opcoes de solucao e feedback detalhado sobre a escolha ideal.
+            </p>
+            <span class="btn btn-ghost">Praticar cenarios</span>
+          </a>
+
+          <a href="flashcards/index.html" class="card format-card f3">
+            <div class="card-icon">F</div>
+            <h3>Flashcards com Repeticao Espacada</h3>
+            <p>
+              Revise conceitos-chave com flashcards inteligentes.
+              O algoritmo de repeticao espacada prioriza o que voce mais precisa revisar.
+            </p>
+            <span class="btn btn-ghost">Revisar flashcards</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 5 Camadas -->
+    <section class="section" id="camadas">
+      <div class="container-narrow">
+        <div class="section-header reveal">
+          <span class="section-label">Metodologia Progressiva</span>
+          <h2 class="section-title">5 Camadas de Aprendizado</h2>
+          <p class="section-subtitle">Cada camada constroi sobre a anterior, do fundamento ao simulado completo.</p>
+        </div>
+
+        <div class="layers-track reveal">
+          <div class="layer-item">
+            <div class="layer-marker">1</div>
+            <div class="layer-content">
+              <h3>Fundamentos</h3>
+              <p>Conceitos essenciais de cada dominio. Vocabulario, definicoes e principios basicos que sustentam tudo o que vem depois.</p>
+            </div>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-marker">2</div>
+            <div class="layer-content">
+              <h3>Estrutura</h3>
+              <p>Padroes de arquitetura, fluxos de orquestracao e decisoes de design. Como os conceitos se conectam em sistemas reais.</p>
+            </div>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-marker">3</div>
+            <div class="layer-content">
+              <h3>Confiabilidade</h3>
+              <p>Tratamento de erros, validacao de saida, monitoramento e estrategias de fallback. Tornar sistemas robustos em producao.</p>
+            </div>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-marker">4</div>
+            <div class="layer-content">
+              <h3>Escala</h3>
+              <p>Otimizacao de contexto, paralelismo de agentes, custos e performance. Levar arquiteturas agenticasao proximo nivel.</p>
+            </div>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-marker">5</div>
+            <div class="layer-content">
+              <h3>Simulado</h3>
+              <p>Cenarios completos que integram todos os dominios. Pratica no formato real do exame com feedback detalhado.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 5 Golden Rules -->
+    <section class="section" id="rules">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Principios Fundamentais</span>
+          <h2 class="section-title">5 Regras de Ouro</h2>
+          <p class="section-subtitle">As regras que diferenciam respostas corretas de excelentes no exame CCA.</p>
+        </div>
+
+        <div class="rules-grid reveal">
+          <div class="card rule-card">
+            <span class="rule-number">01</span>
+            <h3>Hooks &gt; Prompts</h3>
+            <p>Prefira hooks de pre e pos-processamento a instrucoes soltas. Hooks sao deterministicos, auditaveis e nao dependem da interpretacao do modelo.</p>
+          </div>
+
+          <div class="card rule-card">
+            <span class="rule-number">02</span>
+            <h3>Erros Estruturados Sempre</h3>
+            <p>Toda ferramenta deve retornar erros em formato estruturado. Nunca lance excecoes genericas — o agente precisa entender e reagir ao erro.</p>
+          </div>
+
+          <div class="card rule-card">
+            <span class="rule-number">03</span>
+            <h3>4-5 Ferramentas por Agente</h3>
+            <p>Mantenha o escopo de cada agente focado. Muitas ferramentas geram confusao; poucas demais forcar workarounds. O ponto ideal esta entre 4 e 5.</p>
+          </div>
+
+          <div class="card rule-card">
+            <span class="rule-number">04</span>
+            <h3>Revisao Independente</h3>
+            <p>Toda saida critica deve ser validada por um segundo agente ou processo. Nunca confie em auto-avaliacao para decisoes de alta consequencia.</p>
+          </div>
+
+          <div class="card rule-card">
+            <span class="rule-number">05</span>
+            <h3>Exemplos &gt; Instrucoes</h3>
+            <p>Few-shot examples sao mais eficazes que instrucoes longas. Mostre ao modelo o formato esperado em vez de descrevelo em detalhes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>CCA-Q2 — Preparatorio para Claude Certified Architect</p>
+      <p>Desenvolvido como material de estudo independente. Nao afiliado a Anthropic.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // ── Nav toggle (mobile) ──
+    (function() {
+      var toggle = document.getElementById('navToggle');
+      var links = document.getElementById('navLinks');
+
+      toggle.addEventListener('click', function() {
+        var isOpen = links.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen);
+      });
+
+      // Close nav when clicking a link
+      links.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') {
+          links.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+
+    // ── Scroll progress bar ──
+    (function() {
+      var bar = document.getElementById('scrollProgress');
+      window.addEventListener('scroll', function() {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        bar.style.width = pct + '%';
+      }, { passive: true });
+    })();
+
+    // ── Reveal on scroll (IntersectionObserver) ──
+    (function() {
+      var reveals = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        // Fallback: show everything
+        reveals.forEach(function(el) { el.classList.add('visible'); });
+        return;
+      }
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      reveals.forEach(function(el) { observer.observe(el); });
+    })();
+
+    // ── Animate domain progress bars when visible ──
+    (function() {
+      var bars = document.querySelectorAll('.domain-bar[data-width]');
+      if (!('IntersectionObserver' in window)) {
+        bars.forEach(function(bar) { bar.style.width = bar.dataset.width + '%'; });
+        return;
+      }
+
+      // Scale widths so the largest (27%) fills most of the bar
+      var scale = 100 / 27;
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var w = parseFloat(entry.target.dataset.width);
+            entry.target.style.width = (w * scale) + '%';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+
+      bars.forEach(function(bar) { observer.observe(bar); });
+    })();
+
+    // ── Study Chat Widget ──
+    (function() {
+      var messages = document.getElementById('chatMessages');
+      var input = document.getElementById('chatInput');
+      var sendBtn = document.getElementById('chatSend');
+      var chips = document.getElementById('chatChips');
+
+      var responses = [
+        {
+          keys: ['loop', 'agentico'],
+          text: 'O loop agentico segue o ciclo: receber tarefa > analisar contexto > selecionar ferramenta > executar ferramenta > observar resultado > decidir proximo passo. O agente repete esse ciclo ate considerar a tarefa concluida ou atingir um limite de iteracoes. Cada iteracao consome tokens, entao e importante definir limites claros de parada.'
+        },
+        {
+          keys: ['hook', 'prompt', 'compliance'],
+          text: 'Regra de Ouro #1: Hooks > Prompts. Hooks (PreToolUse, PostToolUse, Notification) sao deterministicos e auditaveis — executam scripts reais antes ou depois de cada chamada de ferramenta. Ja instrucoes em prompt dependem da interpretacao do modelo e podem ser ignoradas. Para compliance e seguranca, sempre prefira hooks.'
+        },
+        {
+          keys: ['multi', 'agente', 'hub', 'spoke'],
+          text: 'A arquitetura hub-and-spoke usa um agente orquestrador (hub) que delega subtarefas a agentes especializados (spokes). Cada spoke tem escopo limitado (4-5 ferramentas) e retorna resultados ao hub. Isso permite paralelismo, isolamento de falhas e especializacao. O hub gerencia o fluxo geral e consolida resultados.'
+        },
+        {
+          keys: ['tool', 'ferramenta'],
+          text: 'Regra de Ouro #3: mantenha 4-5 ferramentas por agente. Menos que isso forca workarounds criativos; mais que isso causa confusao na selecao. Cada ferramenta deve ter nome descritivo, descricao clara, JSON Schema para parametros e retornar erros estruturados (nunca excecoes genericas).'
+        },
+        {
+          keys: ['mcp', 'server'],
+          text: 'MCP (Model Context Protocol) conecta agentes a servidores de ferramentas. Configuracao local fica em .mcp.json (no repositorio, compartilhada via git). Configuracao global fica em ~/.claude.json (pessoal, nao compartilhada). Servidores MCP podem expor ferramentas, recursos e prompts. Use stdio para servidores locais e SSE para remotos.'
+        },
+        {
+          keys: ['claude.md', 'configuracao'],
+          text: 'CLAUDE.md segue uma hierarquia de 3 niveis: (1) ~/.claude/CLAUDE.md — configuracao global do usuario, (2) ./CLAUDE.md na raiz do projeto — compartilhado via repositorio, (3) ./subpasta/CLAUDE.md — regras especificas para aquele contexto. Niveis mais especificos sobrescrevem os mais gerais. Use para definir convencoes, padroes e instrucoes persistentes.'
+        },
+        {
+          keys: ['command', 'skill'],
+          text: 'Commands (slash commands) sao atalhos reutilizaveis definidos em .claude/commands/. Cada arquivo .md define um comando com prompt pre-configurado. Podem receber argumentos via $ARGUMENTS. Sao uteis para padronizar tarefas repetitivas como revisao de codigo, commits e debugging.'
+        },
+        {
+          keys: ['plan', 'mode'],
+          text: 'Plan mode (shift+tab para alternar) faz o agente planejar sem executar — ideal para tarefas complexas onde voce quer revisar a estrategia antes. No modo de execucao direta, o agente age imediatamente. A boa pratica e: planejar primeiro em tarefas de alto risco, executar direto em tarefas simples e bem definidas.'
+        },
+        {
+          keys: ['few-shot', 'exemplo'],
+          text: 'Regra de Ouro #5: Exemplos > Instrucoes. Few-shot examples (2-3 pares de entrada/saida) sao mais eficazes que paragrafos de instrucoes. O modelo aprende o padrao implicitamente. Coloque exemplos no system prompt ou em CLAUDE.md. Quanto mais proximo o exemplo do caso real, melhor o resultado.'
+        },
+        {
+          keys: ['json', 'schema', 'estruturad'],
+          text: 'Para saida estruturada, use tool_use com JSON Schema. Defina o schema com tipos, descricoes e campos obrigatorios. O modelo retorna JSON valido seguindo o schema. Isso e mais confiavel que pedir "retorne em JSON" no prompt. Combine com retry + validacao para garantir conformidade.'
+        },
+        {
+          keys: ['retry', 'validacao'],
+          text: 'O padrao retry com feedback de erro funciona assim: (1) tente a operacao, (2) se falhar, capture o erro estruturado, (3) inclua o erro no contexto da proxima tentativa, (4) repita ate N tentativas. O segredo e passar o erro real (nao generico) para que o agente corrija o problema especifico. Limite de 2-3 retries e recomendado.'
+        },
+        {
+          keys: ['batch'],
+          text: 'A Message Batches API permite enviar ate 10.000 requisicoes em lote com 50% de desconto no custo. Ideal para avaliacoes em massa, migracao de dados e testes automatizados. O processamento leva ate 24 horas. Use results_url para recuperar resultados. Cada item no batch e independente.'
+        },
+        {
+          keys: ['review', 'instancia'],
+          text: 'Regra de Ouro #4: Revisao Independente. Para saidas criticas, use um segundo agente (ou instancia separada) para validar. O revisor nao tem acesso ao raciocinio do primeiro agente — avalia apenas o resultado. Isso evita vies de confirmacao. Em CI/CD, pode ser um step separado no pipeline.'
+        },
+        {
+          keys: ['contexto', 'lost', 'middle'],
+          text: 'O efeito "lost in the middle" faz o modelo prestar menos atencao a informacoes no meio de contextos longos. Estrategias: (1) coloque informacoes criticas no inicio e fim do prompt, (2) use resumos compactos para contextos extensos, (3) divida tarefas em subtarefas com contexto focado, (4) use /compact para comprimir historico quando necessario.'
+        },
+        {
+          keys: ['escala', 'escalacao'],
+          text: 'Padroes de escalacao: (1) Agente detecta que esta fora do escopo e escala ao orquestrador, (2) Limites de iteracao atingidos — retorna resultado parcial com status, (3) Erro critico — retorna erro estruturado para decisao humana. Sempre defina criterios claros de escalacao para evitar loops infinitos.'
+        },
+        {
+          keys: ['erro', 'error'],
+          text: 'Regra de Ouro #2: Erros Estruturados Sempre. Toda ferramenta deve retornar erros em formato como { "error": true, "code": "VALIDATION_FAILED", "message": "...", "retry": true }. Nunca lance excecoes genericas. O campo "retry" indica se o agente deve tentar novamente. Isso permite tratamento programatico de falhas.'
+        },
+        {
+          keys: ['ci', 'cd', 'pipeline'],
+          text: 'Claude Code integra-se a CI/CD via modo headless (claude -p "tarefa" --output-format json). Pode executar em GitHub Actions, GitLab CI, etc. Casos de uso: revisao automatica de PRs, geracao de testes, verificacao de compliance. Use --allowedTools para restringir ferramentas no pipeline. Combine com hooks para auditoria.'
+        },
+        {
+          keys: ['regra', 'ouro', 'golden'],
+          text: 'As 5 Regras de Ouro do CCA:\n1. Hooks > Prompts — prefira mecanismos deterministicos\n2. Erros Estruturados Sempre — nunca excecoes genericas\n3. 4-5 Ferramentas por Agente — escopo focado\n4. Revisao Independente — segundo agente valida saidas criticas\n5. Exemplos > Instrucoes — few-shot supera descricoes longas'
+        },
+        {
+          keys: ['exame', 'prova', 'certificacao'],
+          text: 'Formato do exame CCA: 60 questoes de multipla escolha, 120 minutos de duracao, nota minima de 720 em 1000 para aprovacao. As questoes cobrem 5 dominios com pesos diferentes. Foque nos dominios de maior peso para maximizar sua pontuacao.'
+        },
+        {
+          keys: ['dominio', 'peso'],
+          text: 'Os 5 dominios e seus pesos:\n1. Arquitetura Agentica e Orquestracao — 27%\n2. Configuracao e Fluxos do Claude Code — 20%\n3. Engenharia de Prompt e Saida Estruturada — 20%\n4. Design de Ferramentas e Integracao MCP — 18%\n5. Gerenciamento de Contexto e Confiabilidade — 15%'
+        }
+      ];
+
+      var defaultResponse = 'Nao encontrei uma resposta especifica para essa pergunta. Tente perguntar sobre: loop agentico, hooks vs prompts, multi-agente, ferramentas, MCP, CLAUDE.md, few-shot, JSON schemas, CI/CD, ou as 5 regras de ouro.';
+
+      function addMessage(text, role) {
+        var div = document.createElement('div');
+        div.className = 'chat-msg ' + role;
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function getResponse(question) {
+        var q = question.toLowerCase();
+        for (var i = 0; i < responses.length; i++) {
+          var entry = responses[i];
+          for (var j = 0; j < entry.keys.length; j++) {
+            if (q.indexOf(entry.keys[j]) !== -1) {
+              return entry.text;
+            }
+          }
+        }
+        return defaultResponse;
+      }
+
+      function sendMessage(text) {
+        if (!text.trim()) return;
+        addMessage(text, 'user');
+        input.value = '';
+        setTimeout(function() {
+          addMessage(getResponse(text), 'assistant');
+        }, 300);
+      }
+
+      sendBtn.addEventListener('click', function() {
+        sendMessage(input.value);
+      });
+
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          sendMessage(input.value);
+        }
+      });
+
+      chips.addEventListener('click', function(e) {
+        var chip = e.target.closest('.chat-chip');
+        if (chip) {
+          sendMessage(chip.dataset.question);
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Cenarios - CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .scenario-card {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .scenario-card:hover {
+      color: var(--text);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .scenario-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0.25;
+      line-height: 1;
+      margin-bottom: var(--space-sm);
+    }
+    .scenario-card h3 {
+      margin-bottom: var(--space-sm);
+    }
+    .scenario-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: var(--space-md);
+      line-height: 1.5;
+    }
+    .badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .scenario-arrow {
+      position: absolute;
+      top: var(--space-xl);
+      right: var(--space-xl);
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      transition: transform var(--duration) var(--ease);
+    }
+    .scenario-card:hover .scenario-arrow {
+      transform: translateX(4px);
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../mapa/">Mapa</a></li>
+        <li><a href="./" class="active">Cenarios</a></li>
+        <li><a href="../flashcards/">Flashcards</a></li>
+        <li><a href="../camadas/">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <h1 class="fade-in">Simulador de Cenarios</h1>
+      <p class="fade-in fade-in-delay-1">Pratique decisoes arquiteturais em cenarios reais do exame</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="card-grid">
+
+        <a href="cenario-1.html" class="card scenario-card fade-in fade-in-delay-1">
+          <span class="scenario-arrow">&#8594;</span>
+          <div class="scenario-number">01</div>
+          <h3>Agente de Suporte ao Cliente</h3>
+          <p>Projete um agente de suporte com Agent SDK que processa reembolsos, resolve ambiguidades e gerencia handoffs para humanos.</p>
+          <div class="badge-group">
+            <span class="badge badge-d1">D1 Agentic</span>
+            <span class="badge badge-d2">D2 Tools</span>
+            <span class="badge badge-d5">D5 Reliability</span>
+          </div>
+        </a>
+
+        <a href="cenario-2.html" class="card scenario-card fade-in fade-in-delay-2">
+          <span class="scenario-arrow">&#8594;</span>
+          <div class="scenario-number">02</div>
+          <h3>Geracao de Codigo com Claude Code</h3>
+          <p>Configure Claude Code para um projeto TypeScript grande com convencoes compartilhadas, plan mode e regras por diretorio.</p>
+          <div class="badge-group">
+            <span class="badge badge-d3">D3 Claude Code</span>
+            <span class="badge badge-d4">D4 Prompts</span>
+          </div>
+        </a>
+
+        <a href="cenario-3.html" class="card scenario-card fade-in fade-in-delay-3">
+          <span class="scenario-arrow">&#8594;</span>
+          <div class="scenario-number">03</div>
+          <h3>Sistema Multi-Agente de Pesquisa</h3>
+          <p>Orquestre um sistema coordenador-subagente para pesquisa com busca web, analise de documentos e sintese de relatorios.</p>
+          <div class="badge-group">
+            <span class="badge badge-d1">D1 Agentic</span>
+            <span class="badge badge-d2">D2 Tools</span>
+            <span class="badge badge-d5">D5 Reliability</span>
+          </div>
+        </a>
+
+        <a href="cenario-4.html" class="card scenario-card fade-in fade-in-delay-1">
+          <span class="scenario-arrow">&#8594;</span>
+          <div class="scenario-number">04</div>
+          <h3>Produtividade do Desenvolvedor</h3>
+          <p>Configure ferramentas, commands e MCP servers para maximizar a produtividade do time de desenvolvimento com Claude.</p>
+          <div class="badge-group">
+            <span class="badge badge-d2">D2 Tools</span>
+            <span class="badge badge-d3">D3 Claude Code</span>
+          </div>
+        </a>
+
+        <a href="cenario-5.html" class="card scenario-card fade-in fade-in-delay-2">
+          <span class="scenario-arrow">&#8594;</span>
+          <div class="scenario-number">05</div>
+          <h3>Claude Code para CI/CD</h3>
+          <p>Integre Claude Code em pipelines de CI/CD para reviews automatizados, geracao de testes e feedback em pull requests.</p>
+          <div class="badge-group">
+            <span class="badge badge-d3">D3 Claude Code</span>
+            <span class="badge badge-d4">D4 Prompts</span>
+            <span class="badge badge-d5">D5 Reliability</span>
+          </div>
+        </a>
+
+        <a href="cenario-6.html" class="card scenario-card fade-in fade-in-delay-3">
+          <span class="scenario-arrow">&#8594;</span>
+          <div class="scenario-number">06</div>
+          <h3>Extracao de Dados Estruturados</h3>
+          <p>Extraia dados estruturados de documentos nao-estruturados com schemas JSON, tratamento de campos opcionais e validacao.</p>
+          <div class="badge-group">
+            <span class="badge badge-d4">D4 Prompts</span>
+            <span class="badge badge-d5">D5 Reliability</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 — Material de estudo para Claude Certified Architect
+    </div>
+  </footer>
+</body>
+</html>

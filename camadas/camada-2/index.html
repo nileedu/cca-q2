@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camada 2 — Estrutura | CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .layer-hero {
+      padding: 4rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-lg);
+    }
+
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb span { color: var(--text-muted); }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .layer-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--d2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .layer-info h1 {
+      font-size: 2.2rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .layer-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .layer-week {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 0.2em 0.7em;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+    }
+
+    .layer-content {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: var(--space-2xl);
+      padding: var(--space-2xl) 0;
+    }
+
+    .exp-section {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-md);
+      overflow: hidden;
+      transition: border-color var(--duration) var(--ease);
+    }
+
+    .exp-section:hover { border-color: var(--border-hover); }
+
+    .exp-section-inner { border-left: 3px solid var(--d2); }
+
+    .exp-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--bg-card);
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      transition: background var(--duration) var(--ease);
+    }
+
+    .exp-toggle:hover { background: var(--bg-card-hover); }
+
+    .exp-toggle-icon {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s var(--ease);
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .exp-section.open .exp-toggle-icon { transform: rotate(180deg); }
+
+    .exp-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease);
+    }
+
+    .exp-section.open .exp-body { max-height: 2000px; }
+
+    .exp-body-inner {
+      padding: 0 var(--space-xl) var(--space-xl);
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .exp-body-inner p { margin-bottom: var(--space-md); }
+
+    .exp-body-inner ul {
+      margin: var(--space-sm) 0 var(--space-md) var(--space-lg);
+    }
+
+    .exp-body-inner li { margin-bottom: var(--space-xs); }
+
+    .concept-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+    }
+
+    .concept-box h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .anti-pattern {
+      background: var(--danger-subtle);
+      border-left: 3px solid var(--danger);
+      padding: var(--space-md);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: var(--space-md) 0;
+      font-size: 0.9rem;
+    }
+
+    .anti-pattern strong { color: var(--danger); }
+
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+
+    .sidebar-card h3 {
+      font-size: 1rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .sidebar-card ul { list-style: none; }
+
+    .sidebar-card li {
+      padding: var(--space-xs) 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-card li:last-child { border-bottom: none; }
+
+    .sidebar-card li::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--d2);
+      margin-right: 0.6em;
+      vertical-align: middle;
+    }
+
+    .checklist { list-style: none; }
+    .checklist li { border-bottom: 1px solid var(--border); }
+    .checklist li::before { display: none; }
+    .checklist li:last-child { border-bottom: none; }
+
+    .checklist label {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: color var(--duration) var(--ease);
+    }
+
+    .checklist input[type="checkbox"] {
+      accent-color: var(--accent);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .checklist label:has(input:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .next-teaser {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .next-teaser h4 {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: var(--space-xs);
+    }
+
+    .next-teaser p { color: var(--text-secondary); font-size: 0.9rem; }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-2xl) 0;
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-2xl);
+    }
+
+    .bottom-nav a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: all var(--duration) var(--ease);
+    }
+
+    .bottom-nav a:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    @media (max-width: 768px) {
+      .layer-content { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .layer-info h1 { font-size: 1.6rem; }
+      .bottom-nav { flex-direction: column; gap: var(--space-md); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../../index.html">Inicio</a></li>
+        <li><a href="../../mapa/index.html">Mapa</a></li>
+        <li><a href="../../cenarios/index.html">Cenarios</a></li>
+        <li><a href="../../flashcards/index.html">Flashcards</a></li>
+        <li><a href="../index.html" class="active">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="layer-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="../index.html">Camadas</a>
+          <span>/</span>
+          <span>Camada 2</span>
+        </div>
+        <div class="layer-header">
+          <div class="layer-number">2</div>
+          <div class="layer-info">
+            <h1>Estrutura</h1>
+            <div class="layer-meta">
+              <span class="layer-week">Semana 2</span>
+              <span class="badge badge-d3">D3 Claude Code</span>
+              <span class="badge badge-d4">D4 Prompt Engineering</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="layer-content">
+          <div class="layer-main">
+
+            <!-- Section 1 -->
+            <div class="exp-section open">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="true">
+                  <span>CLAUDE.md e Configuracao</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>O CLAUDE.md e o arquivo de configuracao central do Claude Code. Ele define regras, convencoes e contexto que o modelo segue durante toda a sessao.</p>
+                    <p>A hierarquia de configuracao segue tres niveis:</p>
+                    <ul>
+                      <li><strong>User-level</strong> — <code>~/.claude/CLAUDE.md</code> — Preferencias pessoais que se aplicam a todos os projetos</li>
+                      <li><strong>Projeto</strong> — <code>.claude/CLAUDE.md</code> ou raiz do projeto — Convencoes compartilhadas com o time</li>
+                      <li><strong>Diretorio</strong> — CLAUDE.md em subdiretorios — Regras especificas por contexto</li>
+                    </ul>
+                    <div class="concept-box">
+                      <h4>Modularizacao</h4>
+                      <p>Use <code>@import</code> para referenciar outros arquivos de configuracao. Para regras por topico, use <code>.claude/rules/</code> com arquivos separados. O comando <code>/memory</code> adiciona notas persistentes.</p>
+                    </div>
+                    <p>Regras path-specific usam frontmatter YAML com campo <code>paths</code> em arquivos dentro de <code>.claude/rules/</code>. Isso permite carregar convencoes condicionalmente — por exemplo, regras de Terraform so quando editando arquivos <code>terraform/**/*</code>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Commands e Skills</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Commands sao slash commands personalizados que automatizam tarefas repetitivas:</p>
+                    <ul>
+                      <li><strong>Projeto</strong> — <code>.claude/commands/</code> — Versionados no repositorio, compartilhados com o time</li>
+                      <li><strong>Pessoal</strong> — <code>~/.claude/commands/</code> — Atalhos individuais, nao versionados</li>
+                    </ul>
+                    <p>Skills sao uma evolucao dos commands, definidos em <code>.claude/skills/</code> com um arquivo <code>SKILL.md</code>. O frontmatter suporta configuracoes avancadas:</p>
+                    <ul>
+                      <li><code>context: fork</code> — Executa a skill em um fork isolado da sessao, sem poluir o contexto principal</li>
+                      <li><code>allowed-tools</code> — Restringe quais ferramentas a skill pode usar</li>
+                      <li><code>argument-hint</code> — Texto que aparece como dica para o usuario sobre qual parametro fornecer</li>
+                    </ul>
+                    <div class="concept-box">
+                      <h4>Para o Exame</h4>
+                      <p>Questoes sobre commands compartilhados: <code>.claude/commands/</code> (versionado). Questoes sobre isolamento: <code>context: fork</code>.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Few-shot e Saida Estruturada</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Few-shot prompting e a tecnica mais eficaz quando instrucoes detalhadas falham em produzir consistencia. A regra de ouro: <strong>exemplos superam instrucoes</strong>.</p>
+                    <ul>
+                      <li>Use 2-4 exemplos direcionados que cobrem casos ambiguos</li>
+                      <li>Inclua o raciocinio por tras de cada exemplo, nao apenas input/output</li>
+                      <li>Exemplos demonstram julgamento que instrucoes nao conseguem capturar</li>
+                      <li>Reduzem alucinacao em tarefas de extracao</li>
+                    </ul>
+                    <p>Para saida estruturada, <code>tool_use</code> com JSON schemas e o metodo mais confiavel:</p>
+                    <ul>
+                      <li><code>tool_choice: "auto"</code> — Modelo pode retornar texto ou chamar tool</li>
+                      <li><code>tool_choice: "any"</code> — Modelo deve chamar alguma tool (garante estrutura)</li>
+                      <li><code>tool_choice: forced</code> — Modelo deve chamar uma tool especifica</li>
+                    </ul>
+                    <div class="anti-pattern">
+                      <strong>Atencao:</strong> JSON schemas eliminam erros de sintaxe, mas NAO erros semanticos. O modelo pode gerar JSON valido com dados incorretos. Validacao semantica ainda e necessaria.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Projeto: Extrator de Dados</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Evolua o chatbot da Camada 1 para um extrator de dados que converte documentos nao estruturados em JSON.</p>
+                    <ul>
+                      <li>Configure CLAUDE.md com regras de extracao e convencoes do projeto</li>
+                      <li>Defina JSON schemas para os dados extraidos usando <code>tool_use</code></li>
+                      <li>Adicione 2-4 exemplos few-shot para casos ambiguos</li>
+                      <li>Use <code>tool_choice: "any"</code> para garantir saida estruturada</li>
+                      <li>Trate campos opcionais/nullable para dados ausentes</li>
+                    </ul>
+                    <div class="concept-box">
+                      <h4>Evolucao do Projeto</h4>
+                      <p>O chatbot da Camada 1 agora tem estrutura: configuracao via CLAUDE.md, saida previsivel via schemas, e consistencia via few-shot. Na Camada 3, voce adicionara validacao e confiabilidade.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="next-teaser">
+              <div>
+                <h4>Proxima camada</h4>
+                <p><strong>Camada 3 — Confiabilidade:</strong> Hooks deterministicos, validacao com retry, erros estruturados e gerenciamento de contexto.</p>
+              </div>
+              <a href="../camada-3/index.html" class="btn btn-secondary">
+                Camada 3
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            </div>
+
+          </div>
+
+          <aside class="sidebar">
+            <div class="sidebar-card">
+              <h3>Conceitos-chave</h3>
+              <ul>
+                <li>Hierarquia CLAUDE.md (3 niveis)</li>
+                <li>@import e .claude/rules/</li>
+                <li>Commands: projeto vs pessoal</li>
+                <li>Skills: fork, allowed-tools</li>
+                <li>Few-shot > instrucoes</li>
+                <li>tool_choice: auto/any/forced</li>
+                <li>Schemas: sintaxe vs semantica</li>
+              </ul>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Checklist de Aprendizado</h3>
+              <ul class="checklist" id="checklist">
+                <li><label><input type="checkbox" data-key="c2-claude-md"> Entendo a hierarquia CLAUDE.md</label></li>
+                <li><label><input type="checkbox" data-key="c2-rules"> Sei usar .claude/rules/ com paths</label></li>
+                <li><label><input type="checkbox" data-key="c2-commands"> Sei a diferenca entre commands</label></li>
+                <li><label><input type="checkbox" data-key="c2-skills"> Entendo SKILL.md e context: fork</label></li>
+                <li><label><input type="checkbox" data-key="c2-fewshot"> Sei aplicar few-shot prompting</label></li>
+                <li><label><input type="checkbox" data-key="c2-schema"> Sei usar JSON schemas com tool_use</label></li>
+                <li><label><input type="checkbox" data-key="c2-proj"> Completei o projeto pratico</label></li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+
+        <div class="bottom-nav">
+          <a href="../camada-1/index.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+            Camada 1 — Fundamentos
+          </a>
+          <a href="../camada-3/index.html">
+            Camada 3 — Confiabilidade
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 &mdash; Preparatorio Claude Certified Architect
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function() {
+      var links = document.getElementById('navLinks');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+
+    window.addEventListener('scroll', function() {
+      var h = document.documentElement;
+      var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('scrollProgress').style.width = pct + '%';
+    });
+
+    document.querySelectorAll('.exp-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var section = this.closest('.exp-section');
+        var isOpen = section.classList.contains('open');
+        section.classList.toggle('open');
+        this.setAttribute('aria-expanded', !isOpen);
+      });
+    });
+
+    var checks = document.querySelectorAll('#checklist input[type="checkbox"]');
+    checks.forEach(function(cb) {
+      var key = 'cca-camada-' + cb.dataset.key;
+      cb.checked = localStorage.getItem(key) === 'true';
+      cb.addEventListener('change', function() {
+        localStorage.setItem(key, this.checked);
+      });
+    });
+  </script>
+</body>
+</html>

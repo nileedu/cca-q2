@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camada 5 — Simulado | CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .layer-hero {
+      padding: 4rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-lg);
+    }
+
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb span { color: var(--text-muted); }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .layer-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .layer-info h1 {
+      font-size: 2.2rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .layer-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .layer-week {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 0.2em 0.7em;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+    }
+
+    .layer-content {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: var(--space-2xl);
+      padding: var(--space-2xl) 0;
+    }
+
+    /* Expandable sections */
+    .exp-section {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-md);
+      overflow: hidden;
+      transition: border-color var(--duration) var(--ease);
+    }
+
+    .exp-section:hover { border-color: var(--border-hover); }
+
+    .exp-section-inner { border-left: 3px solid var(--accent); }
+
+    .exp-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--bg-card);
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      transition: background var(--duration) var(--ease);
+    }
+
+    .exp-toggle:hover { background: var(--bg-card-hover); }
+
+    .exp-toggle-icon {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s var(--ease);
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .exp-section.open .exp-toggle-icon { transform: rotate(180deg); }
+
+    .exp-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease);
+    }
+
+    .exp-section.open .exp-body { max-height: 5000px; }
+
+    .exp-body-inner {
+      padding: 0 var(--space-xl) var(--space-xl);
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .exp-body-inner p { margin-bottom: var(--space-md); }
+
+    .exp-body-inner ul {
+      margin: var(--space-sm) 0 var(--space-md) var(--space-lg);
+    }
+
+    .exp-body-inner li { margin-bottom: var(--space-xs); }
+
+    /* Golden rules */
+    .golden-rule {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+      border-left: 3px solid var(--warning);
+    }
+
+    .golden-rule h4 {
+      color: var(--text);
+      margin-bottom: var(--space-sm);
+      font-size: 1rem;
+    }
+
+    .golden-rule p {
+      font-size: 0.9rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .golden-rule p:last-child { margin-bottom: 0; }
+
+    .golden-rule .exam-tip {
+      font-size: 0.85rem;
+      color: var(--warning);
+      font-weight: 500;
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Quiz */
+    .quiz-domain {
+      margin-bottom: var(--space-xl);
+    }
+
+    .quiz-domain h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .quiz-domain h4.domain-d1 { color: var(--d1); border-bottom-color: var(--d1); }
+    .quiz-domain h4.domain-d2 { color: var(--d2); border-bottom-color: var(--d2); }
+    .quiz-domain h4.domain-d3 { color: var(--d3); border-bottom-color: var(--d3); }
+    .quiz-domain h4.domain-d4 { color: var(--d4); border-bottom-color: var(--d4); }
+    .quiz-domain h4.domain-d5 { color: var(--d5); border-bottom-color: var(--d5); }
+
+    .quiz-q {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+      transition: border-color var(--duration) var(--ease);
+    }
+
+    .quiz-q p {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: var(--space-md);
+    }
+
+    .quiz-options {
+      list-style: none;
+      margin: 0;
+    }
+
+    .quiz-options li {
+      margin-bottom: var(--space-sm);
+    }
+
+    .quiz-options label {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all var(--duration) var(--ease);
+    }
+
+    .quiz-options label:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .quiz-options input[type="radio"] {
+      accent-color: var(--accent);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .quiz-feedback {
+      display: none;
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+    }
+
+    .quiz-feedback.correct {
+      display: block;
+      background: var(--success-subtle);
+      border-left: 3px solid var(--success);
+      color: var(--success);
+    }
+
+    .quiz-feedback.wrong {
+      display: block;
+      background: var(--danger-subtle);
+      border-left: 3px solid var(--danger);
+      color: var(--danger);
+    }
+
+    /* Score */
+    .quiz-score {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      text-align: center;
+      margin-top: var(--space-xl);
+    }
+
+    .quiz-score h3 {
+      margin-bottom: var(--space-sm);
+    }
+
+    .quiz-score .score-value {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .quiz-score p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: var(--space-sm);
+    }
+
+    .quiz-score .btn {
+      margin-top: var(--space-lg);
+    }
+
+    /* Tips */
+    .tip-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+
+    .tip-card h4 {
+      color: var(--text);
+      margin-bottom: var(--space-sm);
+    }
+
+    .tip-card p {
+      font-size: 0.9rem;
+    }
+
+    /* Links */
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .link-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      text-align: center;
+      transition: all var(--duration) var(--ease);
+      display: block;
+      color: var(--text);
+    }
+
+    .link-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .link-card h4 {
+      font-size: 1rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .link-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+
+    .sidebar-card h3 {
+      font-size: 1rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .sidebar-card ul { list-style: none; }
+
+    .sidebar-card li {
+      padding: var(--space-xs) 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-card li:last-child { border-bottom: none; }
+
+    .sidebar-card li::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-right: 0.6em;
+      vertical-align: middle;
+    }
+
+    .checklist { list-style: none; }
+    .checklist li { border-bottom: 1px solid var(--border); }
+    .checklist li::before { display: none; }
+    .checklist li:last-child { border-bottom: none; }
+
+    .checklist label {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: color var(--duration) var(--ease);
+    }
+
+    .checklist input[type="checkbox"] {
+      accent-color: var(--accent);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .checklist label:has(input:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-2xl) 0;
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-2xl);
+    }
+
+    .bottom-nav a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: all var(--duration) var(--ease);
+    }
+
+    .bottom-nav a:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .bottom-nav .placeholder {
+      visibility: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .layer-content { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .layer-info h1 { font-size: 1.6rem; }
+      .bottom-nav { flex-direction: column; gap: var(--space-md); }
+      .link-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../../index.html">Inicio</a></li>
+        <li><a href="../../mapa/index.html">Mapa</a></li>
+        <li><a href="../../cenarios/index.html">Cenarios</a></li>
+        <li><a href="../../flashcards/index.html">Flashcards</a></li>
+        <li><a href="../index.html" class="active">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="layer-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="../index.html">Camadas</a>
+          <span>/</span>
+          <span>Camada 5</span>
+        </div>
+        <div class="layer-header">
+          <div class="layer-number">5</div>
+          <div class="layer-info">
+            <h1>Simulado</h1>
+            <div class="layer-meta">
+              <span class="layer-week">Semana 5</span>
+              <span class="badge badge-d1">D1</span>
+              <span class="badge badge-d2">D2</span>
+              <span class="badge badge-d3">D3</span>
+              <span class="badge badge-d4">D4</span>
+              <span class="badge badge-d5">D5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="layer-content">
+          <div class="layer-main">
+
+            <!-- Section 1: Regras de Ouro -->
+            <div class="exp-section open">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="true">
+                  <span>Revisao das 5 Regras de Ouro</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Estas sao as cinco regras que aparecem repetidamente no exame. Internalize cada uma.</p>
+
+                    <div class="golden-rule">
+                      <h4>1. Hooks = deterministico, Prompts = probabilistico</h4>
+                      <p>Quando compliance e obrigatorio (financeiro, legal, seguranca), use hooks programaticos. Prompts podem falhar. PostToolUse hooks interceptam e bloqueiam em tempo real.</p>
+                      <p class="exam-tip">Dica: Se a questao menciona "compliance", "financeiro" ou "regulatorio", a resposta quase sempre envolve hooks, nao prompts.</p>
+                    </div>
+
+                    <div class="golden-rule">
+                      <h4>2. Exemplos > Instrucoes</h4>
+                      <p>Quando instrucoes detalhadas falham em produzir consistencia, 2-4 exemplos few-shot resolvem. Exemplos demonstram julgamento que instrucoes nao capturam.</p>
+                      <p class="exam-tip">Dica: Se a questao diz "instrucoes nao estao funcionando para consistencia", a resposta e few-shot, nao mais instrucoes.</p>
+                    </div>
+
+                    <div class="golden-rule">
+                      <h4>3. Segunda instancia > Self-review</h4>
+                      <p>O modelo rethem contexto de raciocinio e resiste a questionar suas proprias decisoes. Uma segunda instancia independente e sempre superior para revisao.</p>
+                      <p class="exam-tip">Dica: Questoes sobre "melhor forma de revisar codigo gerado" — segunda instancia, nao extended thinking ou self-review.</p>
+                    </div>
+
+                    <div class="golden-rule">
+                      <h4>4. Erros estruturados, nunca genericos</h4>
+                      <p>errorCategory, isRetryable, resultados parciais, alternativas. Erros genericos impedem recuperacao inteligente. Distinga falhas de acesso de resultados vazios validos.</p>
+                      <p class="exam-tip">Dica: Se a questao mostra um erro generico ("Something went wrong"), a resposta correta sempre adiciona estrutura e contexto.</p>
+                    </div>
+
+                    <div class="golden-rule">
+                      <h4>5. Contexto explicito, nunca implicito</h4>
+                      <p>Subagentes nao herdam contexto. Ferramentas precisam de descricoes completas. Case facts devem ser persistidos explicitamente. Nada e "obvio" para o modelo.</p>
+                      <p class="exam-tip">Dica: Se a questao pergunta "subagentes herdam X?", a resposta e sempre NAO — deve ser explicito.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: Quiz -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Mini-Quiz por Dominio (15 questoes)</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner" id="quizContainer">
+
+                    <!-- D1 -->
+                    <div class="quiz-domain">
+                      <h4 class="domain-d1">D1 — Agentic Architecture (27%)</h4>
+
+                      <div class="quiz-q" data-correct="a" data-qid="d1q1">
+                        <p>1. Como o agente sabe quando parar o loop agentico?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d1q1" value="a"> Inspecionando <code>stop_reason = end_turn</code> na resposta da API</label></li>
+                          <li><label><input type="radio" name="d1q1" value="b"> Parseando o texto do assistant para detectar frases de conclusao</label></li>
+                          <li><label><input type="radio" name="d1q1" value="c"> Atingindo um limite pre-configurado de iteracoes</label></li>
+                          <li><label><input type="radio" name="d1q1" value="d"> Verificando se todas as ferramentas disponiveis ja foram chamadas</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d1q1"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="b" data-qid="d1q2">
+                        <p>2. Em uma arquitetura hub-and-spoke, os subagentes herdam automaticamente o contexto do coordenador?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d1q2" value="a"> Sim, todo o historico e repassado automaticamente</label></li>
+                          <li><label><input type="radio" name="d1q2" value="b"> Nao, o contexto deve ser fornecido explicitamente ao spawnar o subagente</label></li>
+                          <li><label><input type="radio" name="d1q2" value="c"> Sim, mas apenas as ultimas 10 mensagens</label></li>
+                          <li><label><input type="radio" name="d1q2" value="d"> Depende da configuracao do AgentDefinition</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d1q2"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="c" data-qid="d1q3">
+                        <p>3. Uma empresa financeira precisa garantir que reembolsos acima de R$1.000 nunca sejam processados automaticamente. Qual abordagem e correta?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d1q3" value="a"> Adicionar instrucao no system prompt: "Nunca processe reembolsos acima de R$1.000"</label></li>
+                          <li><label><input type="radio" name="d1q3" value="b"> Treinar o modelo com exemplos de reembolsos bloqueados</label></li>
+                          <li><label><input type="radio" name="d1q3" value="c"> Implementar um PostToolUse hook que bloqueia a chamada programaticamente</label></li>
+                          <li><label><input type="radio" name="d1q3" value="d"> Usar extended thinking para que o modelo reflita antes de processar</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d1q3"></div>
+                      </div>
+                    </div>
+
+                    <!-- D2 -->
+                    <div class="quiz-domain">
+                      <h4 class="domain-d2">D2 — Tool Design e MCP (18%)</h4>
+
+                      <div class="quiz-q" data-correct="b" data-qid="d2q1">
+                        <p>4. Um agente com 18 ferramentas apresenta erros frequentes de selecao. Qual e a melhor solucao?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d2q1" value="a"> Melhorar as descricoes de todas as 18 ferramentas</label></li>
+                          <li><label><input type="radio" name="d2q1" value="b"> Reduzir para 4-5 ferramentas bem definidas com escopos claros</label></li>
+                          <li><label><input type="radio" name="d2q1" value="c"> Usar tool_choice forced para cada interacao</label></li>
+                          <li><label><input type="radio" name="d2q1" value="d"> Adicionar exemplos de uso em cada descricao</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d2q1"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="a" data-qid="d2q2">
+                        <p>5. Uma ferramenta retorna timeout ao consultar uma API externa. O campo <code>isRetryable</code> deve ser:</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d2q2" value="a"> <code>true</code> — timeouts sao erros transientes que podem se resolver</label></li>
+                          <li><label><input type="radio" name="d2q2" value="b"> <code>false</code> — o timeout indica que o servico esta fora do ar</label></li>
+                          <li><label><input type="radio" name="d2q2" value="c"> Nao incluir o campo, deixar o modelo decidir</label></li>
+                          <li><label><input type="radio" name="d2q2" value="d"> <code>true</code> apenas se for o primeiro timeout</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d2q2"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="c" data-qid="d2q3">
+                        <p>6. Para compartilhar configuracao MCP com todo o time, qual arquivo usar?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d2q3" value="a"> <code>~/.claude.json</code></label></li>
+                          <li><label><input type="radio" name="d2q3" value="b"> <code>~/.claude/CLAUDE.md</code></label></li>
+                          <li><label><input type="radio" name="d2q3" value="c"> <code>.mcp.json</code> na raiz do projeto</label></li>
+                          <li><label><input type="radio" name="d2q3" value="d"> Variavel de ambiente <code>MCP_CONFIG</code></label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d2q3"></div>
+                      </div>
+                    </div>
+
+                    <!-- D3 -->
+                    <div class="quiz-domain">
+                      <h4 class="domain-d3">D3 — Claude Code (20%)</h4>
+
+                      <div class="quiz-q" data-correct="a" data-qid="d3q1">
+                        <p>7. Como aplicar regras de convencao diferentes para diretorios especificos (ex: regras de Terraform so para arquivos .tf)?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d3q1" value="a"> Usar <code>.claude/rules/</code> com frontmatter YAML contendo <code>paths</code> e globs</label></li>
+                          <li><label><input type="radio" name="d3q1" value="b"> Criar um CLAUDE.md em cada subdiretorio</label></li>
+                          <li><label><input type="radio" name="d3q1" value="c"> Usar condicionais no system prompt</label></li>
+                          <li><label><input type="radio" name="d3q1" value="d"> Configurar via variavel de ambiente</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d3q1"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="b" data-qid="d3q2">
+                        <p>8. Voce precisa reestruturar 50 arquivos em um projeto. Qual abordagem e recomendada?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d3q2" value="a"> Executar diretamente e revisar o diff depois</label></li>
+                          <li><label><input type="radio" name="d3q2" value="b"> Usar plan mode para planejar antes de executar</label></li>
+                          <li><label><input type="radio" name="d3q2" value="c"> Dividir em 50 sessoes separadas, uma por arquivo</label></li>
+                          <li><label><input type="radio" name="d3q2" value="d"> Usar batch API para processar todos de uma vez</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d3q2"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="c" data-qid="d3q3">
+                        <p>9. Qual flag e obrigatoria para usar Claude Code em CI/CD (modo nao-interativo)?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d3q3" value="a"> <code>--batch</code></label></li>
+                          <li><label><input type="radio" name="d3q3" value="b"> <code>--no-interactive</code></label></li>
+                          <li><label><input type="radio" name="d3q3" value="c"> <code>-p</code></label></li>
+                          <li><label><input type="radio" name="d3q3" value="d"> <code>--ci</code></label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d3q3"></div>
+                      </div>
+                    </div>
+
+                    <!-- D4 -->
+                    <div class="quiz-domain">
+                      <h4 class="domain-d4">D4 — Prompt Engineering (20%)</h4>
+
+                      <div class="quiz-q" data-correct="a" data-qid="d4q1">
+                        <p>10. Instrucoes detalhadas nao estao produzindo saida consistente na extracao de dados. Qual e a melhor solucao?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d4q1" value="a"> Adicionar 2-4 exemplos few-shot que mostrem o formato esperado</label></li>
+                          <li><label><input type="radio" name="d4q1" value="b"> Tornar as instrucoes mais longas e especificas</label></li>
+                          <li><label><input type="radio" name="d4q1" value="c"> Aumentar a temperatura do modelo</label></li>
+                          <li><label><input type="radio" name="d4q1" value="d"> Usar um modelo maior</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d4q1"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="b" data-qid="d4q2">
+                        <p>11. O uso de JSON schema com tool_use elimina qual tipo de erro?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d4q2" value="a"> Erros semanticos (dados incorretos)</label></li>
+                          <li><label><input type="radio" name="d4q2" value="b"> Erros de sintaxe (JSON mal formado), mas NAO erros semanticos</label></li>
+                          <li><label><input type="radio" name="d4q2" value="c"> Todos os tipos de erros</label></li>
+                          <li><label><input type="radio" name="d4q2" value="d"> Erros de validacao de tipos</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d4q2"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="a" data-qid="d4q3">
+                        <p>12. Quando o retry com error-feedback e eficaz?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d4q3" value="a"> Para erros de formato — quando o dado existe mas foi extraido incorretamente</label></li>
+                          <li><label><input type="radio" name="d4q3" value="b"> Para qualquer tipo de erro, incluindo dados ausentes no documento</label></li>
+                          <li><label><input type="radio" name="d4q3" value="c"> Apenas para timeouts e erros de rede</label></li>
+                          <li><label><input type="radio" name="d4q3" value="d"> Quando o modelo tem extended thinking ativado</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d4q3"></div>
+                      </div>
+                    </div>
+
+                    <!-- D5 -->
+                    <div class="quiz-domain">
+                      <h4 class="domain-d5">D5 — Context e Reliability (15%)</h4>
+
+                      <div class="quiz-q" data-correct="b" data-qid="d5q1">
+                        <p>13. Um sistema tem 97% de acuracia geral, mas apenas 80% em contratos. Como investigar?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d5q1" value="a"> Aumentar o volume de treino com mais contratos</label></li>
+                          <li><label><input type="radio" name="d5q1" value="b"> Usar amostragem estratificada por tipo de documento e campo</label></li>
+                          <li><label><input type="radio" name="d5q1" value="c"> Reportar a acuracia geral de 97% como metrica principal</label></li>
+                          <li><label><input type="radio" name="d5q1" value="d"> Remover contratos do dataset de avaliacao</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d5q1"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="c" data-qid="d5q2">
+                        <p>14. Ao sintetizar informacao de multiplas fontes que apresentam dados conflitantes, qual e a abordagem correta?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d5q2" value="a"> Escolher a fonte mais recente e ignorar as outras</label></li>
+                          <li><label><input type="radio" name="d5q2" value="b"> Calcular a media dos valores conflitantes</label></li>
+                          <li><label><input type="radio" name="d5q2" value="c"> Anotar os conflitos com atribuicao de fonte e datas de publicacao</label></li>
+                          <li><label><input type="radio" name="d5q2" value="d"> Pedir ao modelo para decidir qual fonte e mais confiavel</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d5q2"></div>
+                      </div>
+
+                      <div class="quiz-q" data-correct="a" data-qid="d5q3">
+                        <p>15. Um cliente pede explicitamente para falar com um humano durante o atendimento automatizado. O que fazer?</p>
+                        <ul class="quiz-options">
+                          <li><label><input type="radio" name="d5q3" value="a"> Transferir imediatamente, sem tentar resolver o problema primeiro</label></li>
+                          <li><label><input type="radio" name="d5q3" value="b"> Tentar resolver o problema antes e transferir apenas se nao conseguir</label></li>
+                          <li><label><input type="radio" name="d5q3" value="c"> Avaliar o score de sentimento para decidir se a transferencia e necessaria</label></li>
+                          <li><label><input type="radio" name="d5q3" value="d"> Perguntar por que o cliente quer falar com um humano</label></li>
+                        </ul>
+                        <div class="quiz-feedback" id="fb-d5q3"></div>
+                      </div>
+                    </div>
+
+                    <div class="quiz-score" id="quizScore" style="display: none;">
+                      <h3>Resultado do Quiz</h3>
+                      <div class="score-value" id="scoreValue">0/15</div>
+                      <p id="scoreMsg"></p>
+                      <button class="btn btn-primary" id="resetQuiz">Refazer Quiz</button>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: Dicas -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Dicas para o Exame</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <div class="tip-card">
+                      <h4>Foco no Dominio 1</h4>
+                      <p>Com 27% do peso, D1 (Agentic Architecture) e o dominio mais importante. Invista tempo extra no loop agentico, multi-agente e hooks.</p>
+                    </div>
+
+                    <div class="tip-card">
+                      <h4>Leia todas as alternativas</h4>
+                      <p>O exame usa 1 resposta correta e 3 distratores. Os distratores sao plaussiveis — leia todas as opcoes antes de escolher. A resposta correta geralmente e a mais especifica e estruturada.</p>
+                    </div>
+
+                    <div class="tip-card">
+                      <h4>Procure palavras-chave</h4>
+                      <p>"Garantir", "compliance", "regulatorio" = hooks. "Consistencia" = few-shot. "Revisar codigo gerado" = segunda instancia. "Subagente herda" = nao, explicito.</p>
+                    </div>
+
+                    <div class="tip-card">
+                      <h4>Anti-patterns sao testados</h4>
+                      <p>O exame testa tanto o que fazer quanto o que NAO fazer. Conheca os anti-patterns: parsing de linguagem natural, caps arbitrarios, erros genericos, self-review.</p>
+                    </div>
+
+                    <div class="tip-card">
+                      <h4>Cenarios sao contextuais</h4>
+                      <p>4 dos 6 cenarios sao selecionados aleatoriamente. Pratique todos os 6 — nao tente adivinhar quais vao cair. Cada cenario cruza multiplos dominios.</p>
+                    </div>
+
+                    <div class="tip-card">
+                      <h4>Score minimo: 720/1000</h4>
+                      <p>Voce nao precisa acertar tudo, mas precisa de consistencia em todos os dominios. Uma nota muito baixa em qualquer dominio pode reprovar mesmo com nota alta nos outros.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4: Links -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Links Uteis</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Acesse as outras secoes do preparatorio para revisao complementar:</p>
+                    <div class="link-grid">
+                      <a href="../../mapa/index.html" class="link-card">
+                        <h4>Mapa de Dominios</h4>
+                        <p>Visao completa dos 5 dominios e seus pesos</p>
+                      </a>
+                      <a href="../../cenarios/index.html" class="link-card">
+                        <h4>Cenarios</h4>
+                        <p>6 cenarios praticos do exame</p>
+                      </a>
+                      <a href="../../flashcards/index.html" class="link-card">
+                        <h4>Flashcards</h4>
+                        <p>Revisao rapida por dominio</p>
+                      </a>
+                      <a href="../index.html" class="link-card">
+                        <h4>Todas as Camadas</h4>
+                        <p>Voltar ao mapa de aprendizado</p>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <aside class="sidebar">
+            <div class="sidebar-card">
+              <h3>Conceitos-chave</h3>
+              <ul>
+                <li>5 Regras de Ouro</li>
+                <li>Hooks para compliance</li>
+                <li>Few-shot para consistencia</li>
+                <li>Segunda instancia para revisao</li>
+                <li>Erros estruturados</li>
+                <li>Contexto explicito</li>
+                <li>Score minimo: 720/1000</li>
+              </ul>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Checklist de Aprendizado</h3>
+              <ul class="checklist" id="checklist">
+                <li><label><input type="checkbox" data-key="c5-rules"> Revisei as 5 regras de ouro</label></li>
+                <li><label><input type="checkbox" data-key="c5-quiz"> Completei o quiz (12+ acertos)</label></li>
+                <li><label><input type="checkbox" data-key="c5-tips"> Li as dicas para o exame</label></li>
+                <li><label><input type="checkbox" data-key="c5-scenarios"> Pratiquei os 6 cenarios</label></li>
+                <li><label><input type="checkbox" data-key="c5-flashcards"> Revisei os flashcards</label></li>
+                <li><label><input type="checkbox" data-key="c5-ready"> Estou pronto para o exame</label></li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+
+        <div class="bottom-nav">
+          <a href="../camada-4/index.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+            Camada 4 — Escala
+          </a>
+          <span class="placeholder">
+            Proxima
+            <svg width="16" height="16" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/></svg>
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 &mdash; Preparatorio Claude Certified Architect
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav
+    document.getElementById('navToggle').addEventListener('click', function() {
+      var links = document.getElementById('navLinks');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+
+    // Scroll progress
+    window.addEventListener('scroll', function() {
+      var h = document.documentElement;
+      var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('scrollProgress').style.width = pct + '%';
+    });
+
+    // Expandable sections
+    document.querySelectorAll('.exp-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var section = this.closest('.exp-section');
+        var isOpen = section.classList.contains('open');
+        section.classList.toggle('open');
+        this.setAttribute('aria-expanded', !isOpen);
+      });
+    });
+
+    // Checklist localStorage
+    var checks = document.querySelectorAll('#checklist input[type="checkbox"]');
+    checks.forEach(function(cb) {
+      var key = 'cca-camada-' + cb.dataset.key;
+      cb.checked = localStorage.getItem(key) === 'true';
+      cb.addEventListener('change', function() {
+        localStorage.setItem(key, this.checked);
+      });
+    });
+
+    // Quiz logic
+    var answers = {
+      d1q1: 'a', d1q2: 'b', d1q3: 'c',
+      d2q1: 'b', d2q2: 'a', d2q3: 'c',
+      d3q1: 'a', d3q2: 'b', d3q3: 'c',
+      d4q1: 'a', d4q2: 'b', d4q3: 'a',
+      d5q1: 'b', d5q2: 'c', d5q3: 'a'
+    };
+
+    var explanations = {
+      d1q1: 'O loop agentico usa stop_reason para determinar se deve continuar (tool_use) ou parar (end_turn). Parsear texto ou usar caps arbitrarios sao anti-patterns.',
+      d1q2: 'Subagentes tem contexto isolado. O coordenador deve fornecer explicitamente todas as informacoes necessarias ao spawnar um subagente.',
+      d1q3: 'Compliance financeira exige garantias deterministicas. Hooks bloqueiam programaticamente; prompts sao probabilisticos e podem falhar.',
+      d2q1: 'Com 18 ferramentas, a confiabilidade de selecao cai drasticamente. Reduzir para 4-5 com escopos claros e a solucao correta.',
+      d2q2: 'Timeouts sao erros transientes (transient). Marcar isRetryable como true permite que o modelo tente novamente de forma inteligente.',
+      d2q3: '.mcp.json na raiz do projeto e versionado no repositorio e compartilhado com o time. ~/.claude.json e pessoal.',
+      d3q1: 'Arquivos em .claude/rules/ com frontmatter YAML paths permitem carregar regras condicionalmente baseadas em glob patterns.',
+      d3q2: 'Plan mode e recomendado para mudancas complexas e de larga escala. Permite planejar a abordagem antes da execucao.',
+      d3q3: 'A flag -p (prompt mode) e obrigatoria para modo nao-interativo em CI/CD. Sem ela, Claude Code espera input do terminal.',
+      d4q1: 'Quando instrucoes detalhadas falham, few-shot com 2-4 exemplos e a tecnica mais eficaz para consistencia.',
+      d4q2: 'JSON schemas eliminam erros de sintaxe (JSON mal formado), mas nao erros semanticos (dados incorretos no JSON valido).',
+      d4q3: 'Retry com feedback funciona para erros de formato. Se a informacao esta ausente do documento fonte, retry nao ajuda.',
+      d5q1: 'Amostragem estratificada revela que a acuracia geral pode mascarar problemas em tipos especificos de documentos.',
+      d5q2: 'Fontes conflitantes devem ser anotadas com atribuicao de fonte e datas. Nunca escolha arbitrariamente uma fonte sobre outra.',
+      d5q3: 'Quando o cliente pede explicitamente para falar com um humano, transferir imediatamente. Sem condicoes, sem tentativas de resolver primeiro.'
+    };
+
+    var score = 0;
+    var answered = 0;
+    var totalQ = 15;
+
+    // Load saved quiz state
+    var savedQuiz = JSON.parse(localStorage.getItem('cca-quiz-c5') || '{}');
+
+    document.querySelectorAll('.quiz-q').forEach(function(qDiv) {
+      var qid = qDiv.dataset.qid;
+      var correct = qDiv.dataset.correct;
+
+      // Restore saved answers
+      if (savedQuiz[qid]) {
+        var savedVal = savedQuiz[qid];
+        var radio = qDiv.querySelector('input[value="' + savedVal + '"]');
+        if (radio) {
+          radio.checked = true;
+          showFeedback(qid, savedVal, correct);
+          answered++;
+          if (savedVal === correct) score++;
+        }
+      }
+
+      qDiv.querySelectorAll('input[type="radio"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+          var val = this.value;
+          savedQuiz[qid] = val;
+          localStorage.setItem('cca-quiz-c5', JSON.stringify(savedQuiz));
+
+          // Disable all radios in this question
+          qDiv.querySelectorAll('input[type="radio"]').forEach(function(r) {
+            r.disabled = true;
+          });
+
+          answered++;
+          if (val === correct) score++;
+          showFeedback(qid, val, correct);
+
+          if (answered >= totalQ) {
+            showScore();
+          }
+        });
+      });
+    });
+
+    function showFeedback(qid, val, correct) {
+      var fb = document.getElementById('fb-' + qid);
+      if (val === correct) {
+        fb.className = 'quiz-feedback correct';
+        fb.textContent = 'Correto! ' + explanations[qid];
+      } else {
+        fb.className = 'quiz-feedback wrong';
+        fb.textContent = 'Incorreto. ' + explanations[qid];
+      }
+    }
+
+    function showScore() {
+      var scoreDiv = document.getElementById('quizScore');
+      scoreDiv.style.display = 'block';
+      document.getElementById('scoreValue').textContent = score + '/' + totalQ;
+      var msg = document.getElementById('scoreMsg');
+      if (score >= 12) {
+        msg.textContent = 'Excelente! Voce esta bem preparado para o exame.';
+      } else if (score >= 9) {
+        msg.textContent = 'Bom resultado. Revise os topicos das questoes erradas.';
+      } else {
+        msg.textContent = 'Revise as camadas anteriores antes de fazer o exame.';
+      }
+    }
+
+    // Check if quiz was already completed
+    if (Object.keys(savedQuiz).length >= totalQ) {
+      showScore();
+    }
+
+    // Reset quiz
+    document.getElementById('resetQuiz').addEventListener('click', function() {
+      localStorage.removeItem('cca-quiz-c5');
+      savedQuiz = {};
+      score = 0;
+      answered = 0;
+      document.getElementById('quizScore').style.display = 'none';
+      document.querySelectorAll('.quiz-q').forEach(function(qDiv) {
+        qDiv.querySelectorAll('input[type="radio"]').forEach(function(r) {
+          r.checked = false;
+          r.disabled = false;
+        });
+        var qid = qDiv.dataset.qid;
+        var fb = document.getElementById('fb-' + qid);
+        fb.className = 'quiz-feedback';
+        fb.textContent = '';
+      });
+    });
+  </script>
+</body>
+</html>

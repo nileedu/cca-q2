@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camadas — Aprendizado em Espiral | CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .hero {
+      padding: 5rem 0 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(212, 115, 76, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .hero h1 .accent {
+      background: linear-gradient(135deg, var(--accent) 0%, #e8956e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      color: var(--text-secondary);
+      font-size: 1.15rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: var(--space-2xl) 0 var(--space-3xl);
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 32px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(
+        to bottom,
+        var(--d1) 0%, var(--d1) 20%,
+        var(--d2) 20%, var(--d2) 40%,
+        var(--d4) 40%, var(--d4) 60%,
+        var(--d3) 60%, var(--d3) 80%,
+        var(--accent) 80%, var(--accent) 100%
+      );
+      border-radius: 999px;
+    }
+
+    .timeline-node {
+      position: relative;
+      padding-left: 80px;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .timeline-node:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-number {
+      position: absolute;
+      left: 12px;
+      top: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      z-index: 2;
+      box-shadow: 0 0 0 4px var(--bg);
+    }
+
+    .timeline-node:nth-child(1) .timeline-number { background: var(--d1); }
+    .timeline-node:nth-child(2) .timeline-number { background: var(--d2); }
+    .timeline-node:nth-child(3) .timeline-number { background: var(--d4); }
+    .timeline-node:nth-child(4) .timeline-number { background: var(--d3); }
+    .timeline-node:nth-child(5) .timeline-number { background: var(--accent); }
+
+    .timeline-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      transition: all var(--duration) var(--ease);
+    }
+
+    .timeline-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateX(4px);
+    }
+
+    .timeline-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .timeline-card h3 {
+      font-size: 1.35rem;
+    }
+
+    .timeline-week {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 0.2em 0.7em;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+    }
+
+    .timeline-desc {
+      color: var(--text-secondary);
+      margin-bottom: var(--space-md);
+      line-height: 1.7;
+    }
+
+    .timeline-topics {
+      margin-bottom: var(--space-md);
+    }
+
+    .timeline-topics h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .timeline-topics ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    .timeline-topics li {
+      padding: 0.25em 0.65em;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .timeline-project {
+      padding: var(--space-md);
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-md);
+      border-left: 3px solid var(--accent);
+    }
+
+    .timeline-project h4 {
+      font-size: 0.9rem;
+      margin-bottom: var(--space-xs);
+      color: var(--text);
+    }
+
+    .timeline-project p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .timeline-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .badges {
+      display: flex;
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .timeline-link {
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3em;
+    }
+
+    .timeline-link svg {
+      transition: transform var(--duration) var(--ease);
+    }
+
+    .timeline-link:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+
+      .timeline::before {
+        left: 20px;
+      }
+
+      .timeline-number {
+        left: 0;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .timeline-node {
+        padding-left: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../mapa/index.html">Mapa</a></li>
+        <li><a href="../cenarios/index.html">Cenarios</a></li>
+        <li><a href="../flashcards/index.html">Flashcards</a></li>
+        <li><a href="index.html" class="active">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Aprendizado em <span class="accent">Espiral</span></h1>
+        <p>5 camadas de complexidade crescente &mdash; cada uma constroi sobre a anterior</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="timeline">
+
+          <!-- Camada 1 -->
+          <div class="timeline-node reveal">
+            <div class="timeline-number">1</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>Fundamentos</h3>
+                <span class="timeline-week">Semana 1</span>
+              </div>
+              <p class="timeline-desc">Os alicerces de tudo: entenda o que e o Claude, como funciona o loop agentico e como criar sua primeira ferramenta. A base sobre a qual todas as camadas seguintes serao construidas.</p>
+              <div class="timeline-topics">
+                <h4>Topicos</h4>
+                <ul>
+                  <li>API basica do Claude</li>
+                  <li>Loop agentico (stop_reason)</li>
+                  <li>Primeira ferramenta</li>
+                  <li>Model-driven decisions</li>
+                </ul>
+              </div>
+              <div class="timeline-project">
+                <h4>Projeto Pratico</h4>
+                <p>Chatbot simples que consulta API externa via tool, com decisoes guiadas pelo modelo.</p>
+              </div>
+              <div class="timeline-footer">
+                <div class="badges">
+                  <span class="badge badge-d1">D1 Agentic</span>
+                  <span class="badge badge-d2">D2 Tools</span>
+                </div>
+                <a href="camada-1/index.html" class="timeline-link">
+                  Explorar camada
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Camada 2 -->
+          <div class="timeline-node reveal">
+            <div class="timeline-number">2</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>Estrutura</h3>
+                <span class="timeline-week">Semana 2</span>
+              </div>
+              <p class="timeline-desc">Organizacao e configuracao: CLAUDE.md, commands, skills, few-shot prompting e saidas estruturadas com JSON schemas. Transforme prompts vagos em resultados previsiveis.</p>
+              <div class="timeline-topics">
+                <h4>Topicos</h4>
+                <ul>
+                  <li>CLAUDE.md e hierarquia</li>
+                  <li>Commands e Skills</li>
+                  <li>Few-shot prompting</li>
+                  <li>JSON schemas e tool_choice</li>
+                </ul>
+              </div>
+              <div class="timeline-project">
+                <h4>Projeto Pratico</h4>
+                <p>Extrator de dados que converte documentos em JSON estruturado. Evolui o chatbot da Camada 1.</p>
+              </div>
+              <div class="timeline-footer">
+                <div class="badges">
+                  <span class="badge badge-d3">D3 Claude Code</span>
+                  <span class="badge badge-d4">D4 Prompts</span>
+                </div>
+                <a href="camada-2/index.html" class="timeline-link">
+                  Explorar camada
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Camada 3 -->
+          <div class="timeline-node reveal">
+            <div class="timeline-number">3</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>Confiabilidade</h3>
+                <span class="timeline-week">Semana 3</span>
+              </div>
+              <p class="timeline-desc">Garantias deterministicas com hooks, validacao com retry loops, erros estruturados e gerenciamento de contexto. Construa sistemas confiaveis em producao.</p>
+              <div class="timeline-topics">
+                <h4>Topicos</h4>
+                <ul>
+                  <li>Hooks vs Prompts</li>
+                  <li>Retry com feedback</li>
+                  <li>Erros estruturados</li>
+                  <li>Gerenciamento de contexto</li>
+                </ul>
+              </div>
+              <div class="timeline-project">
+                <h4>Projeto Pratico</h4>
+                <p>Agente de suporte com compliance via hooks, escalation patterns e handoff estruturado.</p>
+              </div>
+              <div class="timeline-footer">
+                <div class="badges">
+                  <span class="badge badge-d1">D1 Hooks</span>
+                  <span class="badge badge-d4">D4 Validacao</span>
+                  <span class="badge badge-d5">D5 Contexto</span>
+                </div>
+                <a href="camada-3/index.html" class="timeline-link">
+                  Explorar camada
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Camada 4 -->
+          <div class="timeline-node reveal">
+            <div class="timeline-number">4</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>Escala</h3>
+                <span class="timeline-week">Semana 4</span>
+              </div>
+              <p class="timeline-desc">Sistemas multi-agente, MCP servers, CI/CD com Claude Code e revisao independente. Escale seus agentes para producao real.</p>
+              <div class="timeline-topics">
+                <h4>Topicos</h4>
+                <ul>
+                  <li>Multi-agente hub-and-spoke</li>
+                  <li>MCP servers (.mcp.json)</li>
+                  <li>CI/CD com -p flag</li>
+                  <li>Revisao independente</li>
+                </ul>
+              </div>
+              <div class="timeline-project">
+                <h4>Projeto Pratico</h4>
+                <p>Sistema multi-agente de pesquisa com coordenador e subagentes especializados.</p>
+              </div>
+              <div class="timeline-footer">
+                <div class="badges">
+                  <span class="badge badge-d1">D1 Multi-Agent</span>
+                  <span class="badge badge-d2">D2 MCP</span>
+                  <span class="badge badge-d3">D3 CI/CD</span>
+                </div>
+                <a href="camada-4/index.html" class="timeline-link">
+                  Explorar camada
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Camada 5 -->
+          <div class="timeline-node reveal">
+            <div class="timeline-number">5</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <h3>Simulado</h3>
+                <span class="timeline-week">Semana 5</span>
+              </div>
+              <p class="timeline-desc">Revisao completa das 5 regras de ouro, mini-quiz por dominio e dicas finais para o exame. Consolide tudo que aprendeu.</p>
+              <div class="timeline-topics">
+                <h4>Topicos</h4>
+                <ul>
+                  <li>5 Regras de Ouro</li>
+                  <li>15 questoes interativas</li>
+                  <li>Dicas para o exame</li>
+                  <li>Links de revisao</li>
+                </ul>
+              </div>
+              <div class="timeline-project">
+                <h4>Projeto Final</h4>
+                <p>Simulado completo integrando todos os dominios. Valide sua preparacao para o exame.</p>
+              </div>
+              <div class="timeline-footer">
+                <div class="badges">
+                  <span class="badge badge-d1">D1</span>
+                  <span class="badge badge-d2">D2</span>
+                  <span class="badge badge-d3">D3</span>
+                  <span class="badge badge-d4">D4</span>
+                  <span class="badge badge-d5">D5</span>
+                </div>
+                <a href="camada-5/index.html" class="timeline-link">
+                  Explorar camada
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 &mdash; Preparatorio Claude Certified Architect
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    document.getElementById('navToggle').addEventListener('click', function() {
+      var links = document.getElementById('navLinks');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+
+    // Scroll progress
+    window.addEventListener('scroll', function() {
+      var h = document.documentElement;
+      var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('scrollProgress').style.width = pct + '%';
+    });
+
+    // Reveal on scroll
+    var reveals = document.querySelectorAll('.reveal');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(function(el) { observer.observe(el); });
+  </script>
+</body>
+</html>

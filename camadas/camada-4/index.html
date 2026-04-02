@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camada 4 — Escala | CCA-Q2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .layer-hero {
+      padding: 4rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-lg);
+    }
+
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb span { color: var(--text-muted); }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .layer-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--d3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .layer-info h1 {
+      font-size: 2.2rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .layer-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .layer-week {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 0.2em 0.7em;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+    }
+
+    .layer-content {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: var(--space-2xl);
+      padding: var(--space-2xl) 0;
+    }
+
+    .exp-section {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-md);
+      overflow: hidden;
+      transition: border-color var(--duration) var(--ease);
+    }
+
+    .exp-section:hover { border-color: var(--border-hover); }
+
+    .exp-section:nth-child(1) .exp-section-inner { border-left: 3px solid var(--d1); }
+    .exp-section:nth-child(2) .exp-section-inner { border-left: 3px solid var(--d2); }
+    .exp-section:nth-child(3) .exp-section-inner { border-left: 3px solid var(--d3); }
+    .exp-section:nth-child(4) .exp-section-inner { border-left: 3px solid var(--d4); }
+    .exp-section:nth-child(5) .exp-section-inner { border-left: 3px solid var(--d1); }
+
+    .exp-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--bg-card);
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      transition: background var(--duration) var(--ease);
+    }
+
+    .exp-toggle:hover { background: var(--bg-card-hover); }
+
+    .exp-toggle-icon {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s var(--ease);
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .exp-section.open .exp-toggle-icon { transform: rotate(180deg); }
+
+    .exp-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease);
+    }
+
+    .exp-section.open .exp-body { max-height: 2000px; }
+
+    .exp-body-inner {
+      padding: 0 var(--space-xl) var(--space-xl);
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .exp-body-inner p { margin-bottom: var(--space-md); }
+
+    .exp-body-inner ul {
+      margin: var(--space-sm) 0 var(--space-md) var(--space-lg);
+    }
+
+    .exp-body-inner li { margin-bottom: var(--space-xs); }
+
+    .concept-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+    }
+
+    .concept-box h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .anti-pattern {
+      background: var(--danger-subtle);
+      border-left: 3px solid var(--danger);
+      padding: var(--space-md);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: var(--space-md) 0;
+      font-size: 0.9rem;
+    }
+
+    .anti-pattern strong { color: var(--danger); }
+
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+
+    .sidebar-card h3 {
+      font-size: 1rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .sidebar-card ul { list-style: none; }
+
+    .sidebar-card li {
+      padding: var(--space-xs) 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-card li:last-child { border-bottom: none; }
+
+    .sidebar-card li::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--d3);
+      margin-right: 0.6em;
+      vertical-align: middle;
+    }
+
+    .checklist { list-style: none; }
+    .checklist li { border-bottom: 1px solid var(--border); }
+    .checklist li::before { display: none; }
+    .checklist li:last-child { border-bottom: none; }
+
+    .checklist label {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: color var(--duration) var(--ease);
+    }
+
+    .checklist input[type="checkbox"] {
+      accent-color: var(--accent);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .checklist label:has(input:checked) {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .next-teaser {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .next-teaser h4 {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: var(--space-xs);
+    }
+
+    .next-teaser p { color: var(--text-secondary); font-size: 0.9rem; }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-2xl) 0;
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-2xl);
+    }
+
+    .bottom-nav a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: all var(--duration) var(--ease);
+    }
+
+    .bottom-nav a:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    @media (max-width: 768px) {
+      .layer-content { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .layer-info h1 { font-size: 1.6rem; }
+      .bottom-nav { flex-direction: column; gap: var(--space-md); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
+    <div class="container">
+      <div class="nav-brand-group"><a href="../../index.html" class="nav-brand">CCA<span>-Q2</span></a><span class="nav-brand-sep">|</span><a href="https://github.com/nileedu" target="_blank" class="nav-brand-site">nileedu</a></div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../../index.html">Inicio</a></li>
+        <li><a href="../../mapa/index.html">Mapa</a></li>
+        <li><a href="../../cenarios/index.html">Cenarios</a></li>
+        <li><a href="../../flashcards/index.html">Flashcards</a></li>
+        <li><a href="../index.html" class="active">Camadas</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="layer-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="../index.html">Camadas</a>
+          <span>/</span>
+          <span>Camada 4</span>
+        </div>
+        <div class="layer-header">
+          <div class="layer-number">4</div>
+          <div class="layer-info">
+            <h1>Escala</h1>
+            <div class="layer-meta">
+              <span class="layer-week">Semana 4</span>
+              <span class="badge badge-d1">D1 Multi-Agent</span>
+              <span class="badge badge-d2">D2 MCP</span>
+              <span class="badge badge-d3">D3 CI/CD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="layer-content">
+          <div class="layer-main">
+
+            <!-- Section 1 -->
+            <div class="exp-section open">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="true">
+                  <span>Multi-Agente Hub-and-Spoke</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>A arquitetura hub-and-spoke e o padrao central para sistemas multi-agente no exame. O coordenador (hub) gerencia toda a comunicacao entre subagentes (spokes).</p>
+                    <p>Principios fundamentais:</p>
+                    <ul>
+                      <li><strong>Coordenador gerencia comunicacao</strong> — Subagentes nunca se comunicam diretamente entre si. Tudo passa pelo coordenador.</li>
+                      <li><strong>Subagentes isolados</strong> — Cada subagente tem contexto isolado. Nao herdam o historico do coordenador automaticamente.</li>
+                      <li><strong>Contexto explicito</strong> — Ao invocar um subagente, inclua todas as informacoes necessarias na mensagem. Nada e implicito.</li>
+                      <li><strong>Tool Agent</strong> — Use a ferramenta <code>Agent</code> (antes chamada <code>Task</code>) para spawnar subagentes. <code>allowedTools</code> deve incluir "Agent" para o coordenador.</li>
+                    </ul>
+                    <div class="anti-pattern">
+                      <strong>Risco comum:</strong> Decomposicao excessivamente restrita gera lacunas de cobertura. Se cada subagente recebe um escopo muito estreito, ninguem olha para as intersecoes. O coordenador deve decompor com sobreposicao suficiente.
+                    </div>
+                    <div class="concept-box">
+                      <h4>Para o Exame</h4>
+                      <p>Questoes sobre subagentes herdando contexto: a resposta e sempre NAO — contexto deve ser explicito. Questoes sobre comunicacao entre subagentes: tudo passa pelo coordenador.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>MCP Servers</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>MCP (Model Context Protocol) servers estendem as capacidades do Claude Code com ferramentas externas.</p>
+                    <p>Dois niveis de configuracao:</p>
+                    <ul>
+                      <li><code>.mcp.json</code> — Nivel de projeto, versionado no repositorio. Servidores compartilhados com o time.</li>
+                      <li><code>~/.claude.json</code> — Nivel pessoal. Servidores de uso individual, nao versionados.</li>
+                    </ul>
+                    <p>Credenciais usam expansao de variaveis de ambiente: <code>${GITHUB_TOKEN}</code>, <code>${DATABASE_URL}</code>. Nunca hardcode tokens em arquivos de configuracao.</p>
+                    <p>MCP Resources fornecem catalogos de conteudo — resumos de issues, schemas de banco de dados — que o modelo pode consultar sem executar queries.</p>
+                    <div class="concept-box">
+                      <h4>Para o Exame</h4>
+                      <p>MCP compartilhado com o time: <code>.mcp.json</code>. MCP pessoal: <code>~/.claude.json</code>. Community servers para integracoes padrao (GitHub, Jira, etc).</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>CI/CD com Claude Code</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Claude Code pode ser integrado em pipelines de CI/CD para automacao de code reviews, geracao de testes e feedback em PRs.</p>
+                    <ul>
+                      <li><code>-p</code> flag — Modo nao-interativo, essencial para CI. Sem este flag, Claude Code espera input do terminal.</li>
+                      <li><code>--output-format json</code> — Saida estruturada para processamento automatizado. Combine com <code>--json-schema</code> para validacao.</li>
+                      <li><strong>CLAUDE.md em CI</strong> — Fornece contexto para a instancia CI do Claude Code (padroes de codigo, convencoes do projeto).</li>
+                      <li><strong>Session isolation</strong> — A instancia que gera codigo deve ser diferente da que revisa. Self-review e ineficaz.</li>
+                    </ul>
+                    <div class="concept-box">
+                      <h4>Padrao de Integracao</h4>
+                      <p>Use <code>-p "Review this PR for security issues"</code> no CI, com <code>--output-format json</code> para postar comentarios automaticamente. Inclua findings anteriores para evitar duplicatas.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Revisao Independente</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Uma limitacao fundamental do self-review: o modelo rethem o contexto de raciocinio e tem menos chance de questionar suas proprias decisoes.</p>
+                    <div class="concept-box">
+                      <h4>Regra de Ouro</h4>
+                      <p>Segunda instancia independente > self-review > extended thinking para revisao. A segunda instancia nao tem acesso ao raciocinio original, entao avalia o resultado com olhos frescos.</p>
+                    </div>
+                    <p>Para code review em larga escala, use o padrao multi-pass:</p>
+                    <ul>
+                      <li><strong>Per-file pass</strong> — Analise local de cada arquivo individualmente</li>
+                      <li><strong>Cross-file pass</strong> — Integracao dos findings, verificando consistencia entre arquivos</li>
+                      <li><strong>Verification pass</strong> — Scores de confianca para priorizar revisao humana</li>
+                    </ul>
+                    <div class="anti-pattern">
+                      <strong>Anti-pattern:</strong> Pedir ao mesmo Claude que gerou o codigo para revisar o proprio codigo. O modelo tende a defender suas escolhas em vez de questiona-las.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 5 -->
+            <div class="exp-section">
+              <div class="exp-section-inner">
+                <button class="exp-toggle" aria-expanded="false">
+                  <span>Projeto: Sistema Multi-Agente</span>
+                  <svg class="exp-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="exp-body">
+                  <div class="exp-body-inner">
+                    <p>Evolua o agente de suporte da Camada 3 para um sistema de pesquisa multi-agente:</p>
+                    <ul>
+                      <li><strong>Coordenador</strong> — Recebe a query de pesquisa, decompoe em subtarefas, delega para subagentes, agrega resultados</li>
+                      <li><strong>Subagente de busca</strong> — Executa web search e coleta fontes</li>
+                      <li><strong>Subagente de analise</strong> — Analisa documentos e extrai dados estruturados</li>
+                      <li><strong>Subagente de sintese</strong> — Combina resultados com atribuicao de fontes</li>
+                    </ul>
+                    <p>Integre MCP servers para acesso a APIs externas via <code>.mcp.json</code>. Configure CI/CD para revisao automatica dos relatorios gerados.</p>
+                    <div class="concept-box">
+                      <h4>Evolucao do Projeto</h4>
+                      <p>O agente de suporte agora e um sistema completo: coordenacao multi-agente, integracao MCP, pipeline CI/CD e revisao independente. Na Camada 5, voce consolidara tudo em um simulado.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="next-teaser">
+              <div>
+                <h4>Proxima camada</h4>
+                <p><strong>Camada 5 — Simulado:</strong> Revisao das regras de ouro, quiz por dominio e dicas para o exame. Consolide tudo.</p>
+              </div>
+              <a href="../camada-5/index.html" class="btn btn-secondary">
+                Camada 5
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            </div>
+
+          </div>
+
+          <aside class="sidebar">
+            <div class="sidebar-card">
+              <h3>Conceitos-chave</h3>
+              <ul>
+                <li>Hub-and-spoke architecture</li>
+                <li>Contexto explicito (nao herdado)</li>
+                <li>Agent tool (antes Task)</li>
+                <li>.mcp.json vs ~/.claude.json</li>
+                <li>${TOKEN} para credenciais</li>
+                <li>-p flag para CI</li>
+                <li>Segunda instancia > self-review</li>
+                <li>Multi-pass: per-file + cross-file</li>
+              </ul>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Checklist de Aprendizado</h3>
+              <ul class="checklist" id="checklist">
+                <li><label><input type="checkbox" data-key="c4-hub"> Entendo hub-and-spoke</label></li>
+                <li><label><input type="checkbox" data-key="c4-context"> Sei que contexto e explicito</label></li>
+                <li><label><input type="checkbox" data-key="c4-mcp"> Sei configurar MCP servers</label></li>
+                <li><label><input type="checkbox" data-key="c4-ci"> Sei usar -p flag e json output</label></li>
+                <li><label><input type="checkbox" data-key="c4-review"> Entendo revisao independente</label></li>
+                <li><label><input type="checkbox" data-key="c4-multipass"> Sei o padrao multi-pass</label></li>
+                <li><label><input type="checkbox" data-key="c4-proj"> Completei o projeto pratico</label></li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+
+        <div class="bottom-nav">
+          <a href="../camada-3/index.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+            Camada 3 — Confiabilidade
+          </a>
+          <a href="../camada-5/index.html">
+            Camada 5 — Simulado
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      CCA-Q2 &mdash; Preparatorio Claude Certified Architect
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function() {
+      var links = document.getElementById('navLinks');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+
+    window.addEventListener('scroll', function() {
+      var h = document.documentElement;
+      var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('scrollProgress').style.width = pct + '%';
+    });
+
+    document.querySelectorAll('.exp-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var section = this.closest('.exp-section');
+        var isOpen = section.classList.contains('open');
+        section.classList.toggle('open');
+        this.setAttribute('aria-expanded', !isOpen);
+      });
+    });
+
+    var checks = document.querySelectorAll('#checklist input[type="checkbox"]');
+    checks.forEach(function(cb) {
+      var key = 'cca-camada-' + cb.dataset.key;
+      cb.checked = localStorage.getItem(key) === 'true';
+      cb.addEventListener('change', function() {
+        localStorage.setItem(key, this.checked);
+      });
+    });
+  </script>
+</body>
+</html>
